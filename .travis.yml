@@ -2,7 +2,7 @@ language: python
 python:
 - '3.7'
 script:
-- pip list # TMP to see if twine is installed and upload cmd needed
+- pytest
 deploy:
   provider: pypi
   user: willmarkley
