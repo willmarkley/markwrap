@@ -1,8 +1,8 @@
-os: osx
 language: python
 python:
 - '3.7'
 script:
+- cp markwrap/test/tst.resources/brew /usr/local/bin/brew
 - pytest
 deploy:
   provider: pypi
