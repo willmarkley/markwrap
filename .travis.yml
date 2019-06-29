@@ -3,7 +3,7 @@ python:
 - '3.7'
 script:
 - sudo cp markwrap/test/tst.resources/brew /usr/local/bin/brew
-- pytest
+- pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
 deploy:
   provider: pypi
   user: willmarkley
