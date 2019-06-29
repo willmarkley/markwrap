@@ -23,10 +23,11 @@ def test_compress(caplog, tmp_path):
 	HAPPY_PATH_DIRS = [TMP_DIR / tstconst.EXISTING_DIR_A, TMP_DIR / tstconst.EXISTING_DIR_B, TMP_DIR / tstconst.EXISTING_DIR_C]
 	HAPPY_PATH_TARBALLNAME = TMP_DIR / tstconst.NONEXISTENT_ARCHIVE
 
-	ERROR_RELATIVE_PATH = tstconst.NONEXISTENT_ARCHIVE
+	ERROR_RELATIVE_PATH_ARCHIVE = tstconst.NONEXISTENT_ARCHIVE
 	ERROR_EXISTING_FILE = TMP_DIR / tstconst.EXISTING_FILE
 	ERROR_BAD_FILENAME_ENDING = TMP_DIR / tstconst.NONEXISTENT_FILE
 
+	ERROR_RELATIVE_PATH_DIR = tstconst.EXISTING_DIR
 	ERROR_NONEXISTENT_DIR = TMP_DIR / tstconst.NONEXISTENT_DIR
 
 	ORIGINAL_DIR = TMP_DIR / tstconst.EXISTING_DIR
@@ -34,13 +35,13 @@ def test_compress(caplog, tmp_path):
 
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
-		tar.compress(ERROR_RELATIVE_PATH, HAPPY_PATH_DIRS)
-	assert caplog.text == "[ERROR] tar.compress - tarballName must be an absolute path: " + str(ERROR_RELATIVE_PATH) + "\n"
+		tar.compress(ERROR_RELATIVE_PATH_ARCHIVE, HAPPY_PATH_DIRS)
+	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_PATH_ARCHIVE) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		tar.compress(ERROR_EXISTING_FILE, HAPPY_PATH_DIRS)
-	assert caplog.text == "[ERROR] tar.compress - tarballName already exists: " + str(ERROR_EXISTING_FILE) + "\n"
+	assert caplog.text == "[ERROR] check.nonexistent - file or directory already exists: " + str(ERROR_EXISTING_FILE) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
@@ -49,13 +50,18 @@ def test_compress(caplog, tmp_path):
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
+		tar.compress(HAPPY_PATH_TARBALLNAME, [ERROR_RELATIVE_PATH_DIR])
+	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_PATH_DIR) + "\n"
+	caplog.clear()
+
+	with pytest.raises(RuntimeError):
 		tar.compress(HAPPY_PATH_TARBALLNAME, [ERROR_NONEXISTENT_DIR])
-	assert caplog.text == "[ERROR] tar.compress - Cannot compress non-existant directory: " + str(ERROR_NONEXISTENT_DIR) + "\n"
+	assert caplog.text == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NONEXISTENT_DIR) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		tar.compress(HAPPY_PATH_TARBALLNAME, [ERROR_EXISTING_FILE])
-	assert caplog.text == "[ERROR] tar.compress - Cannot compress non-directory: " + str(ERROR_EXISTING_FILE) + "\n"
+	assert caplog.text == "[ERROR] check.isDir - d is not a directory: " + str(ERROR_EXISTING_FILE) + "\n"
 	caplog.clear()
 
 ## HAPPY PATH
@@ -82,17 +88,29 @@ def test_decompress(caplog, tmp_path):
 	HAPPY_PATH_TARBALL = TMP_DIR / tstconst.EXISTING_ARCHIVE
 	HAPPY_PATH_DESTPATH = TMP_DIR / tstconst.NONEXISTENT_DIR
 
+	ERROR_RELATIVE_PATH_ARCHIVE = tstconst.EXISTING_ARCHIVE
 	ERROR_NONEXISTENT_FILE = TMP_DIR / tstconst.NONEXISTENT_FILE
 	ERROR_NONTARBALL = TMP_DIR / tstconst.EXISTING_FILE
+
 	ERROR_EXISTING_DIR = TMP_DIR / tstconst.EXISTING_DIR
-	ERROR_RELATIVE_PATH = tstconst.NONEXISTENT_DIR
+	ERROR_RELATIVE_PATH_DIR = tstconst.NONEXISTENT_DIR
 
 	ORIGINAL_DIR = TMP_DIR / tstconst.EXISTING_DIR
 
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
+		tar.decompress(ERROR_RELATIVE_PATH_ARCHIVE, HAPPY_PATH_DESTPATH)
+	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_PATH_ARCHIVE) + "\n"
+	caplog.clear()
+
+	with pytest.raises(RuntimeError):
 		tar.decompress(ERROR_NONEXISTENT_FILE, HAPPY_PATH_DESTPATH)
-	assert caplog.text == "[ERROR] tar.decompress - tarballName does not exist: " + str(ERROR_NONEXISTENT_FILE) + "\n"
+	assert caplog.text == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NONEXISTENT_FILE) + "\n"
+	caplog.clear()
+
+	with pytest.raises(RuntimeError):
+		tar.decompress(ERROR_EXISTING_DIR, HAPPY_PATH_DESTPATH)
+	assert caplog.text == "[ERROR] check.isFile - f is not a file: " + str(ERROR_EXISTING_DIR) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
@@ -101,13 +119,13 @@ def test_decompress(caplog, tmp_path):
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
-		tar.decompress(HAPPY_PATH_TARBALL, ERROR_EXISTING_DIR)
-	assert caplog.text == "[ERROR] tar.decompress - destinationPath already exists: " + str(ERROR_EXISTING_DIR) + "\n"
+		tar.decompress(HAPPY_PATH_TARBALL, ERROR_RELATIVE_PATH_DIR)
+	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_PATH_DIR) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
-		tar.decompress(HAPPY_PATH_TARBALL, ERROR_RELATIVE_PATH)
-	assert caplog.text == "[ERROR] tar.decompress - destinationPath must be an absolute path: " + str(ERROR_RELATIVE_PATH) + "\n"
+		tar.decompress(HAPPY_PATH_TARBALL, ERROR_EXISTING_DIR)
+	assert caplog.text == "[ERROR] check.nonexistent - file or directory already exists: " + str(ERROR_EXISTING_DIR) + "\n"
 	caplog.clear()
 
 ## HAPPY PATH

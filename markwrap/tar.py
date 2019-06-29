@@ -10,34 +10,20 @@ Depends on tarfile functionality, but also:
 import logging
 import os
 import tarfile
+from . import check
 
 def compress(tarballName, dirs):
-	## Ensure tarballName does not exist
-	if os.path.exists(tarballName):
-		logging.error("tarballName already exists: %s", tarballName)
-		raise RuntimeError()
+	check.absolutePath(tarballName)
+	check.nonexistent(tarballName)
 
-	## Ensure tarballName is absolute path
-	if not os.path.isabs(tarballName):
-		logging.error("tarballName must be an absolute path: %s", tarballName)
-		raise RuntimeError()
+	for dir in dirs:
+		check.absolutePath(dir)
+		check.exists(dir)
+		check.isDir(dir)
 
-	## Ensure tarballName ends with .tar.gz
 	if str(tarballName)[-7:] != ".tar.gz":
 		logging.error("tarballName must end in .tar.gz: %s", tarballName)
 		raise RuntimeError()
-
-	## Ensure dirs exist, are directories, and are absolute paths
-	for dir in dirs:
-		if not os.path.exists(dir):
-			logging.error("Cannot compress non-existant directory: %s", dir)
-			raise RuntimeError()
-		if not os.path.isdir(dir):
-			logging.error("Cannot compress non-directory: %s", dir)
-			raise RuntimeError()
-		if not os.path.isabs(dir):
-			logging.error("dir must be an absolute path: %s", dir)
-			raise RuntimeError()
 
 	logging.info("Compressing %s into %s", dirs, tarballName)
 	with tarfile.open(tarballName, "w:gz") as tar:
@@ -46,29 +32,15 @@ def compress(tarballName, dirs):
 	logging.info("Compressed %s into %s", dirs, tarballName)
 
 def decompress(tarball, destinationPath):
-	## Ensure tarballName exists
-	if not os.path.exists(tarball):
-		logging.error("tarballName does not exist: %s", tarball)
-		raise RuntimeError()
+	check.absolutePath(tarball)
+	check.absolutePath(destinationPath)
 
-	## Ensure tarballName is absolute path
-	if not os.path.isabs(tarball):
-		logging.error("tarballName must be an absolute path: %s", tarball)
-		raise RuntimeError()
+	check.exists(tarball)
+	check.isFile(tarball)
+	check.nonexistent(destinationPath)
 
-	## Ensure tarballName is tarfile
 	if not tarfile.is_tarfile(tarball):
 		logging.error("tarballName must be a tar file: %s", tarball)
-		raise RuntimeError()
-
-	## Ensure destinationPath does not exist
-	if os.path.exists(destinationPath):
-		logging.error("destinationPath already exists: %s", destinationPath)
-		raise RuntimeError()
-
-	## Ensure destinationPath is absolute path
-	if not os.path.isabs(destinationPath):
-		logging.error("destinationPath must be an absolute path: %s", destinationPath)
 		raise RuntimeError()
 
 	logging.info("Decompressing %s into %s", tarball, destinationPath)
