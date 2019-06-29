@@ -11,4 +11,4 @@ deploy:
     secure: H9tSRtJMcnINosn5U+OMi9CeqTfy3Au6DwL3hydB3/T7v0pf9XgaOvZp34xVjDCYMeO7R7AVunmal5aZ26xui1DQUMTI9Ry1gsrHqZ5qnrc6Ba24NRR+N3wZ6pOkHddGHCNGM2a4nGZt16yJK/Vt0V80oJ8MXGsxkA41FkQ3+8m71WnWt3n2OM/EVVzmOPjqjfIM7Cr57oUpskvOB7lASqGmTzUSMms69rPg+IP2tz+WSzxHi2DlEq9UBNSZ+Kk2O8RKnKzGCpK5PnNUOaidAjyz/fVQcs5pEozYhKhfHsyjxrKGMQvT8ELNe4WeVpip1akNHE7KQ0CxuY0kZxodUF4c0KybzQozo+IdhsP/CbRrqdUHWPG1z7xwVXpKg61s72sctMN081m34VZsplnVAiUw6RB+I0HYMmg7g5G1CFL2RURlmWyq8l8LYwEbYM87VhwQ57FcJelxwS0VdOooedk43yypFBdOxxaQ/QghkyYxj6d+vs0PCUGLHOVe91sXqrU4lps26r8noTrWwoCyeGETKr7pSUDcVjs0K7sNyEhs6f287XK7kbtDCbvOS2JcrjN77XP4XcC+fU5CVHdiQle1jULeXOnvh5xjUb5Vwg6MbQ3mwKZ7esj4/FC64JD/EIRNXPiDSyZsBW5opx9CGX9+ROuW+fbHTHGTwh9RMy8=
   distributions: sdist bdist_wheel
   on:
-    condition: git diff --name-only HEAD~ | grep -q "setup.py"
+    condition: "$(git diff --name-only HEAD~ | grep -c setup.py)" -eq 1
