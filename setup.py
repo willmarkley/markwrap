@@ -21,5 +21,5 @@ setuptools.setup(
         "Topic :: System",
         "Topic :: Software Development :: Libraries",
     ],
-    install_requires=[''],
+    install_requires=[],
 )
