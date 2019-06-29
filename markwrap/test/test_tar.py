@@ -1,14 +1,11 @@
 import markwrap.tar as tar
+import markwrap.test.constants as tstconst
 import logging
 import pytest
 import os
 import shutil
 import subprocess
 import tarfile
-
-TEST_FILE = os.path.abspath(__file__)
-TEST_DIR = os.path.dirname(TEST_FILE)
-TEST_RESOURCES = TEST_DIR + "/tst.resources"
 
 def diffdirs(dir1, dir2):
 	result = subprocess.call(["diff","-r",dir1,dir2], subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -17,97 +14,110 @@ def diffdirs(dir1, dir2):
 	else:
 		return False
 
+
 def test_compress(caplog, tmp_path):
 	caplog.set_level(logging.DEBUG)
-
 	TMP_DIR = tmp_path / "tst.resources"
-	shutil.copytree(TEST_RESOURCES, TMP_DIR)
+	shutil.copytree(tstconst.TEST_RESOURCES_DIR, TMP_DIR)
 
-	# Assert exception for relative path #
+	HAPPY_PATH_DIRS = [TMP_DIR / tstconst.EXISTING_DIR_A, TMP_DIR / tstconst.EXISTING_DIR_B, TMP_DIR / tstconst.EXISTING_DIR_C]
+	HAPPY_PATH_TARBALLNAME = TMP_DIR / tstconst.NONEXISTENT_ARCHIVE
+
+	ERROR_RELATIVE_PATH = tstconst.NONEXISTENT_ARCHIVE
+	ERROR_EXISTING_FILE = TMP_DIR / tstconst.EXISTING_FILE
+	ERROR_BAD_FILENAME_ENDING = TMP_DIR / tstconst.NONEXISTENT_FILE
+
+	ERROR_NONEXISTENT_DIR = TMP_DIR / tstconst.NONEXISTENT_DIR
+
+	ORIGINAL_DIR = TMP_DIR / tstconst.EXISTING_DIR
+	TARGET_DIR = TMP_DIR / "extracted"
+
+## INVALID INPUT
 	with pytest.raises(RuntimeError):
-		tar.compress("relativePath", [TMP_DIR / "dirs" / "a"])
-	assert caplog.text == "[ERROR] tar.compress - tarballName must be an absolute path: relativePath\n"
+		tar.compress(ERROR_RELATIVE_PATH, HAPPY_PATH_DIRS)
+	assert caplog.text == "[ERROR] tar.compress - tarballName must be an absolute path: " + str(ERROR_RELATIVE_PATH) + "\n"
 	caplog.clear()
 
-	# Assert exception for tarballName already existing #
 	with pytest.raises(RuntimeError):
-		tar.compress(TMP_DIR / "dirs" / "a" / "a1.txt", [TMP_DIR / "dirs" / "a"])
-	assert caplog.text == "[ERROR] tar.compress - tarballName already exists: " + str(TMP_DIR / "dirs" / "a" / "a1.txt") + "\n"
+		tar.compress(ERROR_EXISTING_FILE, HAPPY_PATH_DIRS)
+	assert caplog.text == "[ERROR] tar.compress - tarballName already exists: " + str(ERROR_EXISTING_FILE) + "\n"
 	caplog.clear()
 
-	# Assert exception for tarballName not ending in .tar.gz existing #
 	with pytest.raises(RuntimeError):
-		tar.compress(TMP_DIR / "improperTarballNameEnding.txt", [TMP_DIR / "dirs" / "a"])
-	assert caplog.text == "[ERROR] tar.compress - tarballName must end in .tar.gz: " + str(TMP_DIR / "improperTarballNameEnding.txt") + "\n"
+		tar.compress(ERROR_BAD_FILENAME_ENDING, HAPPY_PATH_DIRS)
+	assert caplog.text == "[ERROR] tar.compress - tarballName must end in .tar.gz: " + str(ERROR_BAD_FILENAME_ENDING) + "\n"
 	caplog.clear()
 
-	# Assert exception for dirs not existing #
 	with pytest.raises(RuntimeError):
-		tar.compress(TMP_DIR / "test.tar.gz", [TMP_DIR / "dirs" / "d"])
-	assert caplog.text == "[ERROR] tar.compress - Cannot compress non-existant directory: " + str(TMP_DIR / "dirs" / "d") + "\n"
+		tar.compress(HAPPY_PATH_TARBALLNAME, [ERROR_NONEXISTENT_DIR])
+	assert caplog.text == "[ERROR] tar.compress - Cannot compress non-existant directory: " + str(ERROR_NONEXISTENT_DIR) + "\n"
 	caplog.clear()
 
-	# Assert exception for dirs being a file #
 	with pytest.raises(RuntimeError):
-		tar.compress(TMP_DIR / "test.tar.gz", [TMP_DIR / "dirs" / "a" / "a1.txt"])
-	assert caplog.text == "[ERROR] tar.compress - Cannot compress non-directory: " + str(TMP_DIR / "dirs" / "a" / "a1.txt") + "\n"
+		tar.compress(HAPPY_PATH_TARBALLNAME, [ERROR_EXISTING_FILE])
+	assert caplog.text == "[ERROR] tar.compress - Cannot compress non-directory: " + str(ERROR_EXISTING_FILE) + "\n"
 	caplog.clear()
 
-	# Assert happy path has no exception #
-	tar.compress(TMP_DIR / "test.tar.gz", [TMP_DIR / "dirs" / "a", TMP_DIR / "dirs" / "b", TMP_DIR / "dirs" / "c"])
+## HAPPY PATH
+	tar.compress(HAPPY_PATH_TARBALLNAME, HAPPY_PATH_DIRS)
 
-	with tarfile.open(TMP_DIR / "test.tar.gz", "r:gz") as tarball:
-		tarball.extractall(TMP_DIR / "extracted")
+	with tarfile.open(HAPPY_PATH_TARBALLNAME, "r:gz") as tarball:
+		tarball.extractall(TARGET_DIR)
 
-	if diffdirs(TMP_DIR / "dirs", TMP_DIR / "extracted"):
+	if diffdirs(ORIGINAL_DIR, TARGET_DIR):
 		assert False
-
-	dirsStr = str([TMP_DIR / "dirs" / "a", TMP_DIR / "dirs" / "b", TMP_DIR / "dirs" / "c"])
 
 	lines = caplog.text.splitlines()
 	assert len(lines) == 2
-	assert lines[0] == "[INFO] tar.compress - Compressing " + dirsStr + " into " + str(TMP_DIR / "test.tar.gz")
-	assert lines[1] == "[INFO] tar.compress - Compressed " + dirsStr + " into " + str(TMP_DIR / "test.tar.gz")
+	assert lines[0] == "[INFO] tar.compress - Compressing " + str(HAPPY_PATH_DIRS) + " into " + str(HAPPY_PATH_TARBALLNAME)
+	assert lines[1] == "[INFO] tar.compress - Compressed " + str(HAPPY_PATH_DIRS) + " into " + str(HAPPY_PATH_TARBALLNAME)
 	caplog.clear()
+
 
 def test_decompress(caplog, tmp_path):
 	caplog.set_level(logging.DEBUG)
-
 	TMP_DIR = tmp_path / "tst.resources"
-	shutil.copytree(TEST_RESOURCES, TMP_DIR)
+	shutil.copytree(tstconst.TEST_RESOURCES_DIR, TMP_DIR)
 
-	# Assert exception for tarballName not existing #
+	HAPPY_PATH_TARBALL = TMP_DIR / tstconst.EXISTING_ARCHIVE
+	HAPPY_PATH_DESTPATH = TMP_DIR / tstconst.NONEXISTENT_DIR
+
+	ERROR_NONEXISTENT_FILE = TMP_DIR / tstconst.NONEXISTENT_FILE
+	ERROR_NONTARBALL = TMP_DIR / tstconst.EXISTING_FILE
+	ERROR_EXISTING_DIR = TMP_DIR / tstconst.EXISTING_DIR
+	ERROR_RELATIVE_PATH = tstconst.NONEXISTENT_DIR
+
+	ORIGINAL_DIR = TMP_DIR / tstconst.EXISTING_DIR
+
+## INVALID INPUT
 	with pytest.raises(RuntimeError):
-		tar.decompress(TMP_DIR / "doesnotExist.tar.gz", TMP_DIR / "new")
-	assert caplog.text == "[ERROR] tar.decompress - tarballName does not exist: " + str(TMP_DIR / "doesnotExist.tar.gz") + "\n"
+		tar.decompress(ERROR_NONEXISTENT_FILE, HAPPY_PATH_DESTPATH)
+	assert caplog.text == "[ERROR] tar.decompress - tarballName does not exist: " + str(ERROR_NONEXISTENT_FILE) + "\n"
 	caplog.clear()
 
-	# Assert exception for tarballName not being a tar file #
 	with pytest.raises(RuntimeError):
-		tar.decompress(TMP_DIR / "dirs" / "a" / "a1.txt", TMP_DIR / "new")
-	assert caplog.text == "[ERROR] tar.decompress - tarballName must be a tar file: " + str(TMP_DIR / "dirs" / "a" / "a1.txt") + "\n"
+		tar.decompress(ERROR_NONTARBALL, HAPPY_PATH_DESTPATH)
+	assert caplog.text == "[ERROR] tar.decompress - tarballName must be a tar file: " + str(ERROR_NONTARBALL) + "\n"
 	caplog.clear()
 
-	# Assert exception for dir existing #
 	with pytest.raises(RuntimeError):
-		tar.decompress(TMP_DIR / "archive.tar.gz", TMP_DIR / "dirs")
-	assert caplog.text == "[ERROR] tar.decompress - destinationPath already exists: " + str(TMP_DIR / "dirs") + "\n"
+		tar.decompress(HAPPY_PATH_TARBALL, ERROR_EXISTING_DIR)
+	assert caplog.text == "[ERROR] tar.decompress - destinationPath already exists: " + str(ERROR_EXISTING_DIR) + "\n"
 	caplog.clear()
 
-	# Assert exception for dir being a relative path #
 	with pytest.raises(RuntimeError):
-		tar.decompress(TMP_DIR / "archive.tar.gz", "new")
-	assert caplog.text == "[ERROR] tar.decompress - destinationPath must be an absolute path: new\n"
+		tar.decompress(HAPPY_PATH_TARBALL, ERROR_RELATIVE_PATH)
+	assert caplog.text == "[ERROR] tar.decompress - destinationPath must be an absolute path: " + str(ERROR_RELATIVE_PATH) + "\n"
 	caplog.clear()
 
-	# Assert happy path has no exception #
-	tar.decompress(TMP_DIR / "archive.tar.gz", TMP_DIR / "new")
+## HAPPY PATH
+	tar.decompress(HAPPY_PATH_TARBALL, HAPPY_PATH_DESTPATH)
 
-	if diffdirs(TMP_DIR / "dirs", TMP_DIR / "new"):
+	if diffdirs(ORIGINAL_DIR, HAPPY_PATH_DESTPATH):
 		assert False
 
 	lines = caplog.text.splitlines()
 	assert len(lines) == 2
-	assert lines[0] == "[INFO] tar.decompress - Decompressing " + str(TMP_DIR / "archive.tar.gz") + " into " + str(TMP_DIR / "new")
-	assert lines[1] == "[INFO] tar.decompress - Decompressed " + str(TMP_DIR / "archive.tar.gz") + " into " + str(TMP_DIR / "new")
+	assert lines[0] == "[INFO] tar.decompress - Decompressing " + str(HAPPY_PATH_TARBALL) + " into " + str(HAPPY_PATH_DESTPATH)
+	assert lines[1] == "[INFO] tar.decompress - Decompressed " + str(HAPPY_PATH_TARBALL) + " into " + str(HAPPY_PATH_DESTPATH)
 	caplog.clear()

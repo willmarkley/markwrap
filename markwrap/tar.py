@@ -45,20 +45,20 @@ def compress(tarballName, dirs):
 			tar.add(dir, arcname=os.path.basename(dir))
 	logging.info("Compressed %s into %s", dirs, tarballName)
 
-def decompress(tarballName, destinationPath):
+def decompress(tarball, destinationPath):
 	## Ensure tarballName exists
-	if not os.path.exists(tarballName):
-		logging.error("tarballName does not exist: %s", tarballName)
+	if not os.path.exists(tarball):
+		logging.error("tarballName does not exist: %s", tarball)
 		raise RuntimeError()
 
 	## Ensure tarballName is absolute path
-	if not os.path.isabs(tarballName):
-		logging.error("tarballName must be an absolute path: %s", tarballName)
+	if not os.path.isabs(tarball):
+		logging.error("tarballName must be an absolute path: %s", tarball)
 		raise RuntimeError()
 
 	## Ensure tarballName is tarfile
-	if not tarfile.is_tarfile(tarballName):
-		logging.error("tarballName must be a tar file: %s", tarballName)
+	if not tarfile.is_tarfile(tarball):
+		logging.error("tarballName must be a tar file: %s", tarball)
 		raise RuntimeError()
 
 	## Ensure destinationPath does not exist
@@ -71,7 +71,7 @@ def decompress(tarballName, destinationPath):
 		logging.error("destinationPath must be an absolute path: %s", destinationPath)
 		raise RuntimeError()
 
-	logging.info("Decompressing %s into %s", tarballName, destinationPath)
-	with tarfile.open(tarballName, "r:gz") as tar:
+	logging.info("Decompressing %s into %s", tarball, destinationPath)
+	with tarfile.open(tarball, "r:gz") as tar:
 		tar.extractall(destinationPath)
-	logging.info("Decompressed %s into %s", tarballName, destinationPath)
+	logging.info("Decompressed %s into %s", tarball, destinationPath)
