@@ -1,5 +1,6 @@
 os: osx
 install:
+- brew uninstall $(brew list -1 | grep -v python)
 - pip3 install -r requirements.txt
 script:
 - pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
