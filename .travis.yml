@@ -1,6 +1,6 @@
-language: python
-python:
-- '3.7'
+os: osx
+install:
+- pip install -r requirements.txt
 script:
 - sudo cp markwrap/test/tst.resources/brew /usr/local/bin/brew
 - pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
