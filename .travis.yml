@@ -1,6 +1,5 @@
 os: osx
 install:
-- brew install python3
 - pip3 install -r requirements.txt
 script:
 - pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
