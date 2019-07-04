@@ -43,6 +43,7 @@ Testing
 ::
 
     gpg --import --batch --passphrase aable markwrap/test/tst.resources/4C7798F2.asc
+    echo -e "5\ny\n" | gpg --command-fd 0 --edit-key 4C7798F2 trust
     pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
 
 
