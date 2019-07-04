@@ -44,17 +44,3 @@ def test_brew_upgrade(caplog):
 	assert len(lines) == 2
 	assert lines[0] == "[INFO] brew.upgrade - Process started   :  /usr/local/bin/brew upgrade"
 	assert lines[1] == "[INFO] brew.upgrade - Process terminated:  /usr/local/bin/brew upgrade"
-
-def test_brew_validateInstall(caplog):
-	## ARRANGE ##
-	caplog.set_level(logging.DEBUG)
-
-	## ACT ##
-	brew.validateInstall()
-
-	## ASSERT ##
-	lines = caplog.text.splitlines()
-	assert len(lines) == 3
-	assert lines[0] == "[INFO] brew.validateInstall - Validating Homebrew install at /usr/local/bin/brew"
-	assert lines[1] == "[INFO] brew.validateInstall - Homebrew found at /usr/local/bin/brew"
-	assert lines[2] == "[INFO] brew.validateInstall - Validated Homebrew install at /usr/local/bin/brew"
