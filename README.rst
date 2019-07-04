@@ -46,9 +46,12 @@ Testing
 
 
 **Warning**: the 4C7798F2 will be added to your default gpg keyring on whichever system this command is run
-Note: the 4C7798F2 was a publically available key retrieved from the python-gnupg test_secring.gpg
+
+*Note*: the 4C7798F2 was a publically available key retrieved from the `python-gnupg`_ `test_secring.gpg`_
 
 
 .. _setup.py: setup.py
 .. _Brewfile: Brewfile
 .. _requirements.txt: requirements.txt
+.. _python-gnupg: https://pypi.org/project/python-gnupg/
+.. _test_secring.gpg: https://bitbucket.org/vinay.sajip/python-gnupg/src/default/test_secring.gpg
