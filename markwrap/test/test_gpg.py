@@ -160,7 +160,6 @@ def test_decrypt(caplog, tmp_path):
 	caplog.clear()
 
 ## HAPPY PATH
-	caplog.set_level(logging.DEBUG) ## TEMP
 	output = gpg.decrypt(HAPPY_PATH_FILEPATH)
 	assert output == str(HAPPY_PATH_OUTPUT)
 
