@@ -1,1 +1,1 @@
-tree
+brew "tree"
