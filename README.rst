@@ -26,28 +26,26 @@ Dependencies
 
 - Python dependencies:
 
-	- See setup.py for runtime dependencies
-	- See requirements.txt for all dependencies
-	- To install:
-::
-	pip install -r requirements.txt
+  - See `setup.py`_ for runtime dependencies
+  - See `requirements.txt`_ for all dependencies
+  - To install: ``pip install -r requirements.txt``
 
 - Non-python dependencies:
 
-	- See Brewfile
-	- To install:
-::
-	brew bundle
+  - See `Brewfile`_
+  - To install: ``brew bundle``
 
 
 Testing
 =======
 
 ::
-	gpg --import-key markwrap/test/tst.resources/4C7798F2.asc
-	pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
 
-Warning: the 4C7798F2 will be added to your default gpg keyring on whichever system this command is run
+    gpg --import markwrap/test/tst.resources/4C7798F2.asc
+    pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
+
+
+**Warning**: the 4C7798F2 will be added to your default gpg keyring on whichever system this command is run
 
 
 .. _setup.py: setup.py
