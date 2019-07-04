@@ -3,6 +3,7 @@ install:
 - brew uninstall $(brew list -1 | grep -v "python" | grep -v "gdbm" | grep -v "openssl" | grep -v "readline" | grep -v "sqlite" | grep -v "xz")
 - brew update
 - brew upgrade
+- brew bundle
 - pip3 install --upgrade pip
 - pip3 install -r requirements.txt
 script:

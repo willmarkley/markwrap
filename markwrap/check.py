@@ -44,3 +44,20 @@ def isDir(d):
 	if not os.path.isdir(d):
 		logging.error("d is not a directory: %s", d)
 		raise RuntimeError()
+
+def endsIn(file, ending):
+	nonNone(file)
+	nonNone(ending)
+
+	if str(file)[-len(ending):] != ending:
+		logging.error("file must end in %s: %s", ending, file)
+		raise RuntimeError()
+
+def hexadecimal(s):
+	nonNone(s)
+
+	try:
+		int(s, 16)
+	except ValueError:
+		logging.error("string must be hexadecimal characters: %s",s)
+		raise RuntimeError()

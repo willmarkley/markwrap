@@ -46,7 +46,7 @@ def test_compress(caplog, tmp_path):
 
 	with pytest.raises(RuntimeError):
 		tar.compress(ERROR_BAD_FILENAME_ENDING, HAPPY_PATH_DIRS)
-	assert caplog.text == "[ERROR] tar.compress - tarballName must end in .tar.gz: " + str(ERROR_BAD_FILENAME_ENDING) + "\n"
+	assert caplog.text == "[ERROR] check.endsIn - file must end in .tar.gz: " + str(ERROR_BAD_FILENAME_ENDING) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):

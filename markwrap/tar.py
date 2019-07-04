@@ -21,9 +21,7 @@ def compress(tarballName, dirs):
 		check.exists(dir)
 		check.isDir(dir)
 
-	if str(tarballName)[-7:] != ".tar.gz":
-		logging.error("tarballName must end in .tar.gz: %s", tarballName)
-		raise RuntimeError()
+	check.endsIn(tarballName, ".tar.gz")
 
 	logging.info("Compressing %s into %s", dirs, tarballName)
 	with tarfile.open(tarballName, "w:gz") as tar:

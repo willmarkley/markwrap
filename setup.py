@@ -16,7 +16,7 @@ setuptools.setup(
     classifiers=[
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Operating System :: Unix",
+        "Operating System :: MacOS",
         "Programming Language :: Python :: 3",
         "Topic :: System",
         "Topic :: Software Development :: Libraries",
