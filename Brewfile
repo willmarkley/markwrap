@@ -1,1 +1,1 @@
-brew "tree"
+brew "gpg"
