@@ -41,11 +41,12 @@ Testing
 
 ::
 
-    gpg --import markwrap/test/tst.resources/4C7798F2.asc
+    gpg --import --batch --passphrase aable markwrap/test/tst.resources/4C7798F2.asc
     pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
 
 
 **Warning**: the 4C7798F2 will be added to your default gpg keyring on whichever system this command is run
+Note: the 4C7798F2 was a publically available key retrieved from the python-gnupg test_secring.gpg
 
 
 .. _setup.py: setup.py
