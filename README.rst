@@ -32,6 +32,7 @@ Dependencies
 
 - Non-python dependencies:
 
+  - `Homebrew`_
   - See `Brewfile`_
   - To install: ``brew bundle``
 
@@ -51,7 +52,8 @@ Testing
 
 
 .. _setup.py: setup.py
-.. _Brewfile: Brewfile
 .. _requirements.txt: requirements.txt
+.. _Homebrew: https://brew.sh/
+.. _Brewfile: Brewfile
 .. _python-gnupg: https://pypi.org/project/python-gnupg/
 .. _test_secring.gpg: https://bitbucket.org/vinay.sajip/python-gnupg/src/default/test_secring.gpg
