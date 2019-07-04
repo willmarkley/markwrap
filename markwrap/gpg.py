@@ -4,7 +4,34 @@ Python wrapper for the gpg command
 
 import gnupg
 import logging
+import shutil
+import subprocess
 from . import check
+
+GPG_LOC = "/usr/local/bin/gpg"
+
+logging.info("Validating gpg install at %s", GPG_LOC)
+validate_result = shutil.which(GPG_LOC)
+if (validate_result is None):
+	logging.error("gpg not found with shutil at %s", GPG_LOC)
+	raise RuntimeError()
+logging.info("gpg found at %s", GPG_LOC)
+validate_result = subprocess.call([GPG_LOC,"--version"], subprocess.PIPE, stderr=subprocess.STDOUT)
+if (validate_result != 0):
+	logging.error("Error running process (exit code %d):  %s %s", validate_result, GPG_LOC, "--version")
+	raise RuntimeError()
+logging.info("Validated gpg install at %s", GPG_LOC)
+
+try:
+	gpgTest = gnupg.GPG()
+except OSError as error:
+	if str(error) == "Unable to run gpg (gpg) - it may not be available.":
+		logging.error("module gnupg cannot find gpg install")
+		raise RuntimeError()
+	else:
+		raise OSError() from error
+logging.info("Validated module gnupg can locate gpg install")
+
 
 gpg = gnupg.GPG()
 

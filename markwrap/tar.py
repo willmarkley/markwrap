@@ -1,10 +1,5 @@
 '''
 Python wrapper for the tar command
-
-Depends on tarfile functionality, but also:
-* scopes the valid input
-* logs beginning and ending
-* liberally raises exceptions
 '''
 
 import logging
