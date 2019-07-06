@@ -16,7 +16,7 @@ if (validate_result is None):
 	logging.error("Homebrew not found with shutil at %s", BREW)
 	raise RuntimeError()
 logging.info("Homebrew found at %s", BREW)
-validate_result = subprocess.call([BREW,"--version"], subprocess.PIPE, stderr=subprocess.STDOUT)
+validate_result = subprocess.call([BREW,"--version"])
 if (validate_result != 0):
 	logging.error("Error running process (exit code %d):  %s %s", validate_result, BREW, "--version")
 	raise RuntimeError()
