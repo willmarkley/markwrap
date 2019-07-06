@@ -16,7 +16,7 @@ if (validate_result is None):
 	logging.error("gpg not found with shutil at %s", GPG_LOC)
 	raise RuntimeError()
 logging.info("gpg found at %s", GPG_LOC)
-validate_result = subprocess.call([GPG_LOC,"--version"])
+validate_result = subprocess.call([GPG_LOC,"--version"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 if (validate_result != 0):
 	logging.error("Error running process (exit code %d):  %s %s", validate_result, GPG_LOC, "--version")
 	raise RuntimeError()
