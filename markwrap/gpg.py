@@ -5,7 +5,7 @@ Python wrapper for the gpg command
 import gnupg
 import logging
 import shutil
-import subprocess
+from . import process
 from . import check
 
 GPG_LOC = "/usr/local/bin/gpg"
@@ -16,10 +16,7 @@ if (validate_result is None):
 	logging.error("gpg not found with shutil at %s", GPG_LOC)
 	raise RuntimeError()
 logging.info("gpg found at %s", GPG_LOC)
-validate_result = subprocess.call([GPG_LOC,"--version"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-if (validate_result != 0):
-	logging.error("Error running process (exit code %d):  %s %s", validate_result, GPG_LOC, "--version")
-	raise RuntimeError()
+process.quietRun([GPG_LOC,"--version"])
 logging.info("Validated gpg install at %s", GPG_LOC)
 
 try:
@@ -56,6 +53,10 @@ def encrypt(filepath, recipient):
 		if not result.ok:
 			logging.error("Encryption of %s with key %s failed: %s", filepath, recipient, result.status)
 			raise RuntimeError()
+
+	check.exists(targetFile)
+	check.isFile(targetFile)
+	check.sizeNonZero(targetFile)
 	logging.info("Encrypted %s with recipient %s into %s", filepath, recipient, targetFile)
 
 	return targetFile
@@ -85,6 +86,10 @@ def decrypt(filepath):
 		if not result.ok:
 			logging.error("Decryption of %s failed: %s", filepath, result.status)
 			raise RuntimeError()
+
+	check.exists(targetFile)
+	check.isFile(targetFile)
+	check.sizeNonZero(targetFile)
 	logging.info("Decrypted %s into %s", filepath, targetFile)
 
 	return targetFile
