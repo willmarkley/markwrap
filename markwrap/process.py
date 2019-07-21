@@ -12,6 +12,9 @@ def run(command):
 
 	logging.info("Process started   :  %s", command_string)
 	completed_process = subprocess.run(command, capture_output=True, text=True)
+	##### TEMP #####
+	logging.info("completed_process: %s", completed_process)
+	################
 	logging.info("STDOUT:\n%s", completed_process.stdout)
 	logging.info("STDERR:\n%s", completed_process.stderr)
 	if (completed_process.returncode != 0):
