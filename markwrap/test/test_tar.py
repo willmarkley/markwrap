@@ -35,37 +35,42 @@ def test_compress(caplog, tmp_path):
 
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
-		tar.compress(ERROR_RELATIVE_PATH_ARCHIVE, HAPPY_PATH_DIRS)
+		tar.compress(HAPPY_PATH_DIRS, ERROR_RELATIVE_PATH_ARCHIVE)
 	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_PATH_ARCHIVE) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
-		tar.compress(ERROR_EXISTING_FILE, HAPPY_PATH_DIRS)
+		tar.compress(HAPPY_PATH_DIRS, ERROR_EXISTING_FILE)
 	assert caplog.text == "[ERROR] check.nonexistent - file or directory already exists: " + str(ERROR_EXISTING_FILE) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
-		tar.compress(ERROR_BAD_FILENAME_ENDING, HAPPY_PATH_DIRS)
+		tar.compress(HAPPY_PATH_DIRS, ERROR_BAD_FILENAME_ENDING)
 	assert caplog.text == "[ERROR] check.endsIn - file must end in .tar.gz: " + str(ERROR_BAD_FILENAME_ENDING) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
-		tar.compress(HAPPY_PATH_TARBALLNAME, [ERROR_RELATIVE_PATH_DIR])
+		tar.compress([ERROR_RELATIVE_PATH_DIR], HAPPY_PATH_TARBALLNAME)
 	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_PATH_DIR) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
-		tar.compress(HAPPY_PATH_TARBALLNAME, [ERROR_NONEXISTENT_DIR])
+		tar.compress([ERROR_NONEXISTENT_DIR], HAPPY_PATH_TARBALLNAME)
 	assert caplog.text == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NONEXISTENT_DIR) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
-		tar.compress(HAPPY_PATH_TARBALLNAME, [ERROR_EXISTING_FILE])
+		tar.compress([ERROR_EXISTING_FILE], HAPPY_PATH_TARBALLNAME)
 	assert caplog.text == "[ERROR] check.isDir - d is not a directory: " + str(ERROR_EXISTING_FILE) + "\n"
 	caplog.clear()
 
+	with pytest.raises(RuntimeError):
+		tar.compress([HAPPY_PATH_DIRS[0], HAPPY_PATH_DIRS[0]], HAPPY_PATH_TARBALLNAME)
+	assert caplog.text == "[ERROR] check.noDuplicates - duplicates found in list: " + str([os.path.basename(HAPPY_PATH_DIRS[0]), os.path.basename(HAPPY_PATH_DIRS[0])]) + "\n"
+	caplog.clear()
+
 ## HAPPY PATH
-	tar.compress(HAPPY_PATH_TARBALLNAME, HAPPY_PATH_DIRS)
+	tar.compress(HAPPY_PATH_DIRS, HAPPY_PATH_TARBALLNAME)
 
 	with tarfile.open(HAPPY_PATH_TARBALLNAME, "r:gz") as tarball:
 		tarball.extractall(TARGET_DIR)

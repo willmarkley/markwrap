@@ -68,3 +68,8 @@ def sizeNonZero(file):
 		logging.error("file size is not greater than zero: %s (%d bytes)", file, os.path.getsize(file))
 		raise RuntimeError()
 
+def noDuplicates(lst):
+	nonNone(lst)
+	if len(lst) != len(set(lst)):
+		logging.error("duplicates found in list: %s", lst)
+		raise RuntimeError()

@@ -7,21 +7,30 @@ import os
 import tarfile
 from . import check
 
-def compress(tarballName, dirs):
-	check.absolutePath(tarballName)
-	check.nonexistent(tarballName)
-
+def compress(dirs, tarballName):
+	basenames = []
 	for dir in dirs:
 		check.absolutePath(dir)
 		check.exists(dir)
 		check.isDir(dir)
+		basenames.append(os.path.basename(dir))
+	check.noDuplicates(basenames)
 
+	check.absolutePath(tarballName)
+	check.nonexistent(tarballName)
 	check.endsIn(tarballName, ".tar.gz")
 
 	logging.info("Compressing %s into %s", dirs, tarballName)
 	with tarfile.open(tarballName, "w:gz") as tar:
 		for dir in dirs:
 			tar.add(dir, arcname=os.path.basename(dir))
+
+	check.exists(tarballName)
+	check.isFile(tarballName)
+	check.sizeNonZero(tarballName)
+	if not tarfile.is_tarfile(tarballName):
+		logging.error("Compression failed.  Output file is not tarFile: %s", tarballName)
+		raise RuntimeError()
 	logging.info("Compressed %s into %s", dirs, tarballName)
 
 def decompress(tarball, destinationPath):
