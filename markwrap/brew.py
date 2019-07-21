@@ -10,14 +10,14 @@ from . import process
 
 BREW="/usr/local/bin/brew"
 
-logging.info("Validating Homebrew install at %s", BREW)
+logging.debug("Validating Homebrew install at %s", BREW)
 validate_result = shutil.which(BREW)
 if (validate_result is None):
 	logging.error("Homebrew not found with shutil at %s", BREW)
 	raise RuntimeError()
-logging.info("Homebrew found at %s", BREW)
+logging.debug("Homebrew found at %s", BREW)
 process.quietRun([BREW,"--version"])
-logging.info("Validated Homebrew install at %s", BREW)
+logging.debug("Validated Homebrew install at %s", BREW)
 
 
 def list():

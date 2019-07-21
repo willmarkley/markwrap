@@ -25,7 +25,7 @@ def quietRun(command):
 		logging.error("Command must be list: %s", command)
 		raise RuntimeError()
 
-	completed_process = subprocess.run(command)
+	completed_process = subprocess.run(command, capture_output=True)
 	if (completed_process.returncode != 0):
 		logging.error("Error running process [%s] (exit code %d):  %s", ' '.join(command), completed_process.returncode, completed_process)
 		raise RuntimeError()

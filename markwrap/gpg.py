@@ -10,14 +10,14 @@ from . import check
 
 GPG_LOC = "/usr/local/bin/gpg"
 
-logging.info("Validating gpg install at %s", GPG_LOC)
+logging.debug("Validating gpg install at %s", GPG_LOC)
 validate_result = shutil.which(GPG_LOC)
 if (validate_result is None):
 	logging.error("gpg not found with shutil at %s", GPG_LOC)
 	raise RuntimeError()
-logging.info("gpg found at %s", GPG_LOC)
+logging.debug("gpg found at %s", GPG_LOC)
 process.quietRun([GPG_LOC,"--version"])
-logging.info("Validated gpg install at %s", GPG_LOC)
+logging.debug("Validated gpg install at %s", GPG_LOC)
 
 try:
 	gpgTest = gnupg.GPG()
@@ -27,7 +27,7 @@ except OSError as error:
 		raise RuntimeError()
 	else:
 		raise OSError() from error
-logging.info("Validated module gnupg can locate gpg install")
+logging.debug("Validated module gnupg can locate gpg install")
 
 
 gpg = gnupg.GPG()

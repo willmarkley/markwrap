@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="markwrap",
-    version="0.0.10",
+    version="0.0.11",
     author="Will Markley",
     author_email="willmarkley@protonmail.com",
     description="Python wrappers around common dependencies",
@@ -21,5 +21,5 @@ setuptools.setup(
         "Topic :: System",
         "Topic :: Software Development :: Libraries",
     ],
-    install_requires=['python-gnupg']
+    install_requires=['python-gnupg'],
 )
