@@ -2,13 +2,12 @@ dist: xenial
 language: python
 python:
   - "3.7"
-before_install:
-  - sudo apt-get install -y gnupg
 install:
 - pip3 install --upgrade pip
 - pip3 install -r requirements.txt
 script:
-- ln -s /usr/bin/gpg /usr/local/bin/gpg
+- ls -l /usr/local/bin
+- sudo ln -s /usr/bin/gpg /usr/local/bin/gpg
 - sudo cp markwrap/test/tst.resources/brew /usr/local/bin/brew
 - gpg --import markwrap/test/tst.resources/4C7798F2.asc
 - echo -e "5\ny\n" | gpg --command-fd 0 --edit-key 4C7798F2 trust
