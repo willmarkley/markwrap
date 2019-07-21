@@ -15,8 +15,8 @@ def run(command):
 	##### TEMP #####
 	logging.info("completed_process: %s", completed_process)
 	################
-	logging.info("STDOUT:\n%s", completed_process.stdout)
-	logging.info("STDERR:\n%s", completed_process.stderr)
+	logging.info("STDOUT: %s", completed_process.stdout)
+	logging.info("STDERR: %s", completed_process.stderr)
 	if (completed_process.returncode != 0):
 		logging.error("Error running process [%s] (exit code %d):  %s", command_string, completed_process.returncode, completed_process)
 		raise RuntimeError()
