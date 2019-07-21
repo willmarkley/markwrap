@@ -12,8 +12,8 @@ def run(command):
 
 	logging.info("Process started   :  %s", command_string)
 	completed_process = subprocess.run(command, capture_output=True, text=True)
-	logging.info("STDOUT:\n%s", completed_process.stdout.rstrip('\n'))
-	logging.info("STDERR:\n%s", completed_process.stderr.rstrip('\n'))
+	logging.info("STDOUT: %s", completed_process.stdout.rstrip('\n'))
+	logging.info("STDERR: %s", completed_process.stderr.rstrip('\n'))
 	if (completed_process.returncode != 0):
 		logging.error("Error running process [%s] (exit code %d):  %s", command_string, completed_process.returncode, completed_process)
 		raise RuntimeError()
