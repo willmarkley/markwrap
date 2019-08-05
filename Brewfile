@@ -1,1 +1,2 @@
 brew "gpg"
+brew "clamav"
