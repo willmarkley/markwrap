@@ -8,6 +8,7 @@ install:
 script:
 - sudo ln -s /usr/bin/gpg /usr/local/bin/gpg
 - sudo cp markwrap/test/tst.resources/brew /usr/local/bin/brew
+- useradd _clamav
 - sudo cp markwrap/test/tst.resources/clamscan /usr/local/bin/clamscan
 - sudo cp markwrap/test/tst.resources/freshclam /usr/local/bin/freshclam
 - gpg --import markwrap/test/tst.resources/4C7798F2.asc
