@@ -12,8 +12,8 @@ from . import check
 
 FRESHCLAM="/usr/local/bin/freshclam"
 CLAMSCAN="/usr/local/bin/clamscan"
-DATABASES="/var/lib/clamav"
-CLAMSCAN_LOG_FILE="/var/log/clamscan.log"
+DATABASES="/usr/local/share/clamav"
+CLAMSCAN_LOG_FILE="/usr/local/var/log/clamscan.log"
 
 logging.debug("Validating freshclam install at %s", FRESHCLAM)
 validate_result = shutil.which(FRESHCLAM)

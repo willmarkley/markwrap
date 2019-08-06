@@ -17,10 +17,10 @@ def test_clamav_clamscan(caplog):
 	## ASSERT ##
 	lines = caplog.text.splitlines()
 	assert len(lines) >= 4
-	assert lines[0]  == "[INFO] process.run - Process started   :  /usr/local/bin/clamscan -ro --database=/var/lib/clamav --log=/var/log/clamscan.log "+TEST_INPUT_DIR
+	assert lines[0]  == "[INFO] process.run - Process started   :  /usr/local/bin/clamscan -ro --database=/usr/local/share/clamav --log=/usr/local/var/log/clamscan.log "+TEST_INPUT_DIR
 	assert lines[1].startswith("[INFO] process.run - STDOUT: ")
 	assert lines[-2] == "[INFO] process.run - STDERR: "
-	assert lines[-1] == "[INFO] process.run - Process terminated:  /usr/local/bin/clamscan -ro --database=/var/lib/clamav --log=/var/log/clamscan.log "+TEST_INPUT_DIR
+	assert lines[-1] == "[INFO] process.run - Process terminated:  /usr/local/bin/clamscan -ro --database=/usr/local/share/clamav --log=/usr/local/var/log/clamscan.log "+TEST_INPUT_DIR
 
 def test_clamav_freshclam(caplog):
 	## ARRANGE ##
