@@ -7,8 +7,9 @@ install:
 - pip3 install -r requirements.txt
 script:
 - sudo ln -s /usr/bin/gpg /usr/local/bin/gpg
-- sudo ls -1 /usr/bin/*clam*
 - sudo cp markwrap/test/tst.resources/brew /usr/local/bin/brew
+- sudo cp markwrap/test/tst.resources/clamscan /usr/local/bin/clamscan
+- sudo cp markwrap/test/tst.resources/freshclam /usr/local/bin/freshclam
 - gpg --import markwrap/test/tst.resources/4C7798F2.asc
 - echo -e "5\ny\n" | gpg --command-fd 0 --edit-key 4C7798F2 trust
 - pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
