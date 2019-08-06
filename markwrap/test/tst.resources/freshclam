@@ -10,7 +10,7 @@ if __name__ == "__main__":
 	if sys.argv[1] == "--version":
 		sys.exit(0)
 
-	if len(sys.argv) == 5:
+	if len(sys.argv) == 3:
 		print("freshclam: refreshing...")
 		sys.exit(0)
 	else:
