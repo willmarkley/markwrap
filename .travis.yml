@@ -11,8 +11,9 @@ script:
 - sudo useradd _clamav
 - sudo cp markwrap/test/tst.resources/clamscan /usr/local/bin/clamscan
 - sudo cp markwrap/test/tst.resources/freshclam /usr/local/bin/freshclam
-- sudo mkdir -p /var/lib/clamav
-- sudo touch /var/log/clamscan.log
+- sudo mkdir -p /usr/local/share/clamav
+- sudo mkdir -p /usr/local/var/log/
+- sudo touch /usr/local/var/log/clamscan.log
 - gpg --import markwrap/test/tst.resources/4C7798F2.asc
 - echo -e "5\ny\n" | gpg --command-fd 0 --edit-key 4C7798F2 trust
 - pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
