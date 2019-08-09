@@ -5,8 +5,9 @@ python:
 install:
 - pip3 install --upgrade pip
 - pip3 install -r requirements.txt
-script:
+before_script:
 - sudo ln -s /usr/bin/gpg /usr/local/bin/gpg
+- sudo ln -s /usr/bin/git /usr/local/bin/git
 - sudo cp markwrap/test/tst.resources/brew /usr/local/bin/brew
 - sudo useradd _clamav
 - sudo cp markwrap/test/tst.resources/clamscan /usr/local/bin/clamscan
@@ -16,6 +17,7 @@ script:
 - sudo touch /usr/local/var/log/clamscan.log
 - gpg --import markwrap/test/tst.resources/4C7798F2.asc
 - echo -e "5\ny\n" | gpg --command-fd 0 --edit-key 4C7798F2 trust
+script:
 - pytest --log-format="[%(levelname)s] %(module)s.%(funcName)s - %(message)s"
 deploy:
   provider: pypi
