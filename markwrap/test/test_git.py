@@ -8,12 +8,12 @@ import pytest
 Not asserting git is actually called with correct arguments.
 Please manually test and verify before committing changes.
 '''
-def test_git_nodiff(caplog):
+def test_git_noDiff(caplog):
 	## ARRANGE ##
 	caplog.set_level(logging.DEBUG)
 
 	## ACT ##
-	result = git.nodiff(os.getcwd())
+	result = git.noDiff(os.getcwd())
 
 	## ASSERT ##
 	assert result

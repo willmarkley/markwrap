@@ -8,8 +8,8 @@ import subprocess
 import tarfile
 
 def diffdirs(dir1, dir2):
-	result = subprocess.call(["diff","-r",dir1,dir2], subprocess.PIPE, stderr=subprocess.STDOUT)
-	if (result != 0):
+	completed_process = subprocess.run(["diff","-r",dir1,dir2], subprocess.PIPE, stderr=subprocess.STDOUT)
+	if (completed_process.returncode != 0):
 		return True
 	else:
 		return False
@@ -120,7 +120,7 @@ def test_decompress(caplog, tmp_path):
 
 	with pytest.raises(RuntimeError):
 		tar.decompress(ERROR_NONTARBALL, HAPPY_PATH_DESTPATH)
-	assert caplog.text == "[ERROR] tar.decompress - tarballName must be a tar file: " + str(ERROR_NONTARBALL) + "\n"
+	assert caplog.text == "[ERROR] tar.decompress - tarball must be a tar file: " + str(ERROR_NONTARBALL) + "\n"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):

@@ -33,11 +33,8 @@ logging.debug("Validated module gnupg can locate gpg install")
 gpg = gnupg.GPG()
 
 def encrypt(filepath, recipient):
-	check.absolutePath(filepath)
-	check.exists(filepath)
 	check.isFile(filepath)
 
-	check.nonNone(recipient)
 	check.hexadecimal(recipient)
 	key = gpg.list_keys(keys=recipient)
 	if len(key) != 1:
@@ -54,16 +51,12 @@ def encrypt(filepath, recipient):
 			logging.error("Encryption of %s with key %s failed: %s", filepath, recipient, result.status)
 			raise RuntimeError()
 
-	check.exists(targetFile)
-	check.isFile(targetFile)
-	check.sizeNonZero(targetFile)
+	check.fileSizeNonZero(targetFile)
 	logging.info("Encrypted %s with recipient %s into %s", filepath, recipient, targetFile)
 
 	return targetFile
 
 def decrypt(filepath):
-	check.absolutePath(filepath)
-	check.exists(filepath)
 	check.isFile(filepath)
 	check.endsIn(filepath, ".gpg")
 	if str(filepath)[-13] != ".":
@@ -87,9 +80,7 @@ def decrypt(filepath):
 			logging.error("Decryption of %s failed: %s", filepath, result.status)
 			raise RuntimeError()
 
-	check.exists(targetFile)
-	check.isFile(targetFile)
-	check.sizeNonZero(targetFile)
+	check.fileSizeNonZero(targetFile)
 	logging.info("Decrypted %s into %s", filepath, targetFile)
 
 	return targetFile

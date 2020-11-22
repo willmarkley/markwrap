@@ -21,7 +21,7 @@ process.quietRun([GIT,"--version"])
 logging.debug("Validated git install at %s", GIT)
 
 
-def nodiff(repoDir):
+def noDiff(repoDir):
 	check.isDir(repoDir)
 	process.quietRun([GIT, "add", "--intent-to-add", "."], cwd=repoDir)
 	result = process.run([GIT, "diff", "origin/master"], cwd=repoDir)

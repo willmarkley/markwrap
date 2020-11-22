@@ -62,7 +62,7 @@ def hexadecimal(s):
 		logging.error("string must be hexadecimal characters: %s",s)
 		raise RuntimeError()
 
-def sizeNonZero(file):
+def fileSizeNonZero(file):
 	isFile(file)
 	if os.path.getsize(file) <= 0:
 		logging.error("file size is not greater than zero: %s (%d bytes)", file, os.path.getsize(file))
