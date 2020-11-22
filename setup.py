@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="markwrap",
-    version="0.0.17",
+    version="0.0.18",
     author="Will Markley",
     description="Python wrappers around common dependencies",
     long_description=long_description,
@@ -16,7 +16,7 @@ setuptools.setup(
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: Unix",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.9",
         "Topic :: System",
         "Topic :: Software Development :: Libraries",
     ],
