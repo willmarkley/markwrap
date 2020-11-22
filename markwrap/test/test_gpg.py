@@ -60,7 +60,7 @@ def test_encrypt(caplog, tmp_path):
 	caplog.set_level(logging.INFO)
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(HAPPY_PATH_FILEPATH, ERROR_NONEXISTENT_KEY_ID)
-	assert caplog.text == "[ERROR] gpg.encrypt - Recipient does not exist in gpg: " + str(ERROR_NONEXISTENT_KEY_ID) + "\n"
+	assert caplog.text == "[WARNING] gnupg._collect_output - gpg returned a non-zero error code: 2\n[ERROR] gpg.encrypt - Recipient does not exist in gpg: " + str(ERROR_NONEXISTENT_KEY_ID) + "\n"
 	caplog.clear()
 
 	open(HAPPY_PATH_OUTPUT, 'a').close()
@@ -156,7 +156,7 @@ def test_decrypt(caplog, tmp_path):
 	caplog.set_level(logging.INFO)
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(ERROR_GPG_FILE_KEYID_NONEXISTENT)
-	assert caplog.text == "[ERROR] gpg.decrypt - Recipient does not exist in gpg: " + str(ERROR_GPG_FILE_KEYID_NONEXISTENT)[:-4][-8:] + "\n"
+	assert caplog.text == "[WARNING] gnupg._collect_output - gpg returned a non-zero error code: 2\n[ERROR] gpg.decrypt - Recipient does not exist in gpg: " + str(ERROR_GPG_FILE_KEYID_NONEXISTENT)[:-4][-8:] + "\n"
 	caplog.clear()
 
 ## HAPPY PATH
