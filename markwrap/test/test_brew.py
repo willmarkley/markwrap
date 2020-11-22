@@ -6,20 +6,35 @@ import logging
 Not asserting Homebrew is actually called with correct arguments.
 Please manually test and verify before committing changes.
 '''
-def test_brew_list(caplog):
+def test_brew_listFormulae(caplog):
 	## ARRANGE ##
 	caplog.set_level(logging.DEBUG)
 
 	## ACT ##
-	brew.list()
+	brew.listFormulae()
 
 	## ASSERT ##
 	lines = caplog.text.splitlines()
 	assert len(lines) >= 4
-	assert lines[0]  == "[INFO] process.run - Process started   :  /usr/local/bin/brew list -1"
+	assert lines[0]  == "[INFO] process.run - Process started   :  /usr/local/bin/brew list --formulae -1"
 	assert lines[1].startswith("[INFO] process.run - STDOUT: ")
 	assert lines[-2] == "[INFO] process.run - STDERR: "
-	assert lines[-1] == "[INFO] process.run - Process terminated:  /usr/local/bin/brew list -1"
+	assert lines[-1] == "[INFO] process.run - Process terminated:  /usr/local/bin/brew list --formulae -1"
+
+def test_brew_listCasks(caplog):
+	## ARRANGE ##
+	caplog.set_level(logging.DEBUG)
+
+	## ACT ##
+	brew.listCasks()
+
+	## ASSERT ##
+	lines = caplog.text.splitlines()
+	assert len(lines) >= 4
+	assert lines[0]  == "[INFO] process.run - Process started   :  /usr/local/bin/brew list --casks -1"
+	assert lines[1].startswith("[INFO] process.run - STDOUT: ")
+	assert lines[-2] == "[INFO] process.run - STDERR: "
+	assert lines[-1] == "[INFO] process.run - Process terminated:  /usr/local/bin/brew list --casks -1"
 
 def test_brew_update(caplog):
 	## ARRANGE ##
@@ -45,14 +60,8 @@ def test_brew_upgrade(caplog):
 
 	## ASSERT ##
 	lines = caplog.text.splitlines()
-	assert len(lines) == 8
+	assert len(lines) == 4
 	assert lines[0]  == "[INFO] process.run - Process started   :  /usr/local/bin/brew upgrade"
 	assert lines[1]  == "[INFO] process.run - STDOUT: "
-	assert lines[2]  == "[INFO] process.run - STDERR: "
-	assert lines[3]  == "[INFO] process.run - Process terminated:  /usr/local/bin/brew upgrade"
-
-	assert lines[4]  == "[INFO] process.run - Process started   :  /usr/local/bin/brew cask upgrade"
-	assert lines[5]  == "[INFO] process.run - STDOUT: ==> No Casks to upgrade"
-	assert lines[-2] == "[INFO] process.run - STDERR: "
-	assert lines[-1] == "[INFO] process.run - Process terminated:  /usr/local/bin/brew cask upgrade"
-
+	assert lines[-2]  == "[INFO] process.run - STDERR: "
+	assert lines[-1]  == "[INFO] process.run - Process terminated:  /usr/local/bin/brew upgrade"
