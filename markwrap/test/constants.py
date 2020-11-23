@@ -11,6 +11,7 @@ EXISTING_DIR_B = "dirs/b"
 EXISTING_DIR_C = "dirs/c"
 EXISTING_FILE  = "file.txt"
 EXISTING_ARCHIVE = "archive.tar.gz"
+EMPTY_FILE = "empty.txt"
 
 NONEXISTENT_DIR = "new"
 NONEXISTENT_FILE = "new.txt"

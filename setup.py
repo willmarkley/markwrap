@@ -20,5 +20,5 @@ setuptools.setup(
         "Topic :: System",
         "Topic :: Software Development :: Libraries",
     ],
-    install_requires=['python-gnupg'],
+    install_requires=['boto3', 'python-gnupg'],
 )

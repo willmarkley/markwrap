@@ -63,12 +63,6 @@ def greaterThanZero(i):
 '''
 Collection checks
 '''
-def singleton(collection):
-	nonNone(collection)
-	if len(collection) != 1:
-		logging.error("Collection is not a singleton: %s", str(collection))
-		raise RuntimeError()
-
 def noDuplicates(lst):
 	nonNone(lst)
 	if len(lst) != len(set(lst)):
