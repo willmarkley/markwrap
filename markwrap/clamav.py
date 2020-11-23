@@ -7,8 +7,8 @@ Please manually test and verify before committing changes.
 import logging
 import pwd
 import shutil
-from . import process
-from . import check
+from .util import process
+from .util import check
 
 FRESHCLAM="/usr/local/bin/freshclam"
 CLAMSCAN="/usr/local/bin/clamscan"

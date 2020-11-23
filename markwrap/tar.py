@@ -5,7 +5,7 @@ Python wrapper for the tar command
 import logging
 import os
 import tarfile
-from . import check
+from .util import check
 
 def compress(dirs, tarballName):
 	basenames = []

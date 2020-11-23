@@ -6,7 +6,7 @@ Please manually test and verify before committing changes.
 
 import logging
 import shutil
-from . import process
+from .util import process
 
 BREW="/usr/local/bin/brew"
 

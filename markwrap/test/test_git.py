@@ -1,4 +1,4 @@
-import markwrap.check as check
+import markwrap.util.check as check
 import markwrap.git as git
 import logging
 import os

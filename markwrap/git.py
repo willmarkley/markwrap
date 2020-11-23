@@ -6,8 +6,8 @@ Please manually test and verify before committing changes.
 
 import logging
 import shutil
-from . import check
-from . import process
+from .util import check
+from .util import process
 
 GIT="/usr/local/bin/git"
 

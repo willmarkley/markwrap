@@ -5,8 +5,8 @@ Python wrapper for the gpg command
 import gnupg
 import logging
 import shutil
-from . import process
-from . import check
+from .util import process
+from .util import check
 
 GPG_LOC = "/usr/local/bin/gpg"
 
