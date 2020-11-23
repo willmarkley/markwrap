@@ -34,7 +34,6 @@ gpg = gnupg.GPG()
 
 def encrypt(filepath, recipient):
 	check.isFile(filepath)
-
 	check.hexadecimal(recipient)
 	key = gpg.list_keys(keys=recipient)
 	if len(key) != 1:

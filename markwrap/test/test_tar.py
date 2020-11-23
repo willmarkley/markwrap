@@ -23,6 +23,8 @@ def test_compress(caplog, tmp_path):
 	HAPPY_PATH_DIRS = [TMP_DIR / tstconst.EXISTING_DIR_A, TMP_DIR / tstconst.EXISTING_DIR_B, TMP_DIR / tstconst.EXISTING_DIR_C]
 	HAPPY_PATH_TARBALLNAME = TMP_DIR / tstconst.NONEXISTENT_ARCHIVE
 
+	ERROR_NON_PATHLIKEOBJECT = tstconst.NON_PATH_LIKE_OBJECT
+	ERROR_EMTPY_STRING = tstconst.EMPTY_STRING
 	ERROR_RELATIVE_PATH_ARCHIVE = tstconst.NONEXISTENT_ARCHIVE
 	ERROR_EXISTING_FILE = TMP_DIR / tstconst.EXISTING_FILE
 	ERROR_BAD_FILENAME_ENDING = TMP_DIR / tstconst.NONEXISTENT_FILE
@@ -34,6 +36,16 @@ def test_compress(caplog, tmp_path):
 	TARGET_DIR = TMP_DIR / "extracted"
 
 ## INVALID INPUT
+	with pytest.raises(RuntimeError):
+		tar.compress(HAPPY_PATH_DIRS, ERROR_NON_PATHLIKEOBJECT)
+	assert caplog.text == "[ERROR] check.pathlikeObject - path must be path-like object: " + str(ERROR_NON_PATHLIKEOBJECT) + "\n"
+	caplog.clear()
+
+	with pytest.raises(RuntimeError):
+		tar.compress(HAPPY_PATH_DIRS, ERROR_EMTPY_STRING)
+	assert caplog.text == "[ERROR] check.nonEmptyString - string cannot be empty: \n"
+	caplog.clear()
+
 	with pytest.raises(RuntimeError):
 		tar.compress(HAPPY_PATH_DIRS, ERROR_RELATIVE_PATH_ARCHIVE)
 	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_PATH_ARCHIVE) + "\n"

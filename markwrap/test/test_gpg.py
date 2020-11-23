@@ -18,6 +18,8 @@ def test_encrypt(caplog, tmp_path):
 	HAPPY_PATH_OUTPUT = str(HAPPY_PATH_FILEPATH) + "." + str(HAPPY_PATH_RECIPIENT)[-8:] + ".gpg"
 	HAPPY_PATH_IDENTICAL_CONTENT = TMP_DIR / tstconst.ENCRYPTED_FILE
 
+	ERROR_NON_PATHLIKEOBJECT = tstconst.NON_PATH_LIKE_OBJECT
+	ERROR_EMTPY_STRING = tstconst.EMPTY_STRING
 	ERROR_RELATIVE_FILEPATH = tstconst.EXISTING_FILE
 	ERROR_NONEXISTENT_FILE = TMP_DIR / tstconst.NONEXISTENT_FILE
 	ERROR_NON_FILE = TMP_DIR / tstconst.EXISTING_DIR
@@ -27,6 +29,16 @@ def test_encrypt(caplog, tmp_path):
 	ERROR_NONEXISTENT_KEY_ID = tstconst.NONEXISTENT_KEY_ID
 
 ## INVALID INPUT
+	with pytest.raises(RuntimeError):
+		gpg.encrypt(ERROR_NON_PATHLIKEOBJECT, HAPPY_PATH_RECIPIENT)
+	assert caplog.text == "[ERROR] check.pathlikeObject - path must be path-like object: " + str(ERROR_NON_PATHLIKEOBJECT) + "\n"
+	caplog.clear()
+
+	with pytest.raises(RuntimeError):
+		gpg.encrypt(ERROR_EMTPY_STRING, HAPPY_PATH_RECIPIENT)
+	assert caplog.text == "[ERROR] check.nonEmptyString - string cannot be empty: \n"
+	caplog.clear()
+
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(ERROR_RELATIVE_FILEPATH, HAPPY_PATH_RECIPIENT)
 	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH) + "\n"
