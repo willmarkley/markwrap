@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="markwrap",
-    version="0.0.18",
+    version="0.0.19",
     author="Will Markley",
     description="Python wrappers around common dependencies",
     long_description=long_description,
