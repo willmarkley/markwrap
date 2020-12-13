@@ -33,6 +33,7 @@ logging.debug("Validated module gnupg can locate gpg install")
 gpg = gnupg.GPG()
 
 def encrypt(filepath, recipient):
+	logging.info("Parameters: filepath=[%s] recipient=[%s]", str(filepath), str(recipient))
 	check.isFile(filepath)
 	check.hexadecimal(recipient)
 	key = gpg.list_keys(keys=recipient)
@@ -56,6 +57,7 @@ def encrypt(filepath, recipient):
 	return targetFile
 
 def decrypt(filepath):
+	logging.info("Parameters: filepath=[%s]", str(filepath))
 	check.isFile(filepath)
 	check.endsIn(filepath, ".gpg")
 	if str(filepath)[-13] != ".":

@@ -28,6 +28,7 @@ class S3:
 		self._s3_client = boto3.client('s3', config=aws_client_config, aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
 
 	def upload(self, bucket, key, filepath):
+		logging.info("Parameters: bucket=[%s] key=[%s] filepath=[%s]", str(bucket), str(key), str(filepath))
 		check.nonEmptyString(bucket)
 		check.nonEmptyString(key)
 		check.fileSizeNonZero(filepath)
@@ -57,6 +58,7 @@ class S3:
 		logging.info("Uploaded filepath %s to S3 bucket %s with key %s", filepath, bucket, key)
 
 	def download(self, bucket, key, filepath):
+		logging.info("Parameters: bucket=[%s] key=[%s] filepath=[%s]", str(bucket), str(key), str(filepath))
 		check.nonEmptyString(bucket)
 		check.nonEmptyString(key)
 		check.nonexistent(filepath)
@@ -82,6 +84,7 @@ class SNS:
 		self._sns = boto3.resource('sns', config=aws_client_config, aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
 
 	def publish(self, topic_arn, message):
+		logging.info("Parameters: topic_arn=[%s] message=[%s]", str(topic_arn), str(message))
 		check.nonEmptyString(message)
 		check.nonEmptyString(topic_arn)
 		if not SNS._arn_regex.fullmatch(topic_arn):

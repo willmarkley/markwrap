@@ -39,37 +39,58 @@ def test_upload(caplog, tmp_path):
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
 		s3.upload(None, HAPPY_PATH_KEY, HAPPY_PATH_FILEPATH)
-	assert caplog.text == "[ERROR] check.nonNone - can NOT be None: None\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(None) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.nonNone - can NOT be None: None"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.upload("", HAPPY_PATH_KEY, HAPPY_PATH_FILEPATH)
-	assert caplog.text == "[ERROR] check.nonEmptyString - string cannot be empty: \n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str("") + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.nonEmptyString - string cannot be empty: "
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.upload(HAPPY_PATH_BUCKET, None, HAPPY_PATH_FILEPATH)
-	assert caplog.text == "[ERROR] check.nonNone - can NOT be None: None\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(None) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.nonNone - can NOT be None: None"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.upload(HAPPY_PATH_BUCKET, "", HAPPY_PATH_FILEPATH)
-	assert caplog.text == "[ERROR] check.nonEmptyString - string cannot be empty: \n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str("") + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.nonEmptyString - string cannot be empty: "
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.upload(HAPPY_PATH_BUCKET, HAPPY_PATH_KEY, ERROR_RELATIVE_FILEPATH)
-	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(ERROR_RELATIVE_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.upload(HAPPY_PATH_BUCKET, HAPPY_PATH_KEY, ERROR_NON_EXISTENT_FILE)
-	assert caplog.text == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NON_EXISTENT_FILE) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(ERROR_NON_EXISTENT_FILE) + "]"
+	assert lines[1] == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NON_EXISTENT_FILE)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.upload(HAPPY_PATH_BUCKET, HAPPY_PATH_KEY, ERROR_EMPTY_FILE)
-	assert caplog.text == "[ERROR] check.fileSizeNonZero - file size is not greater than zero: " + str(ERROR_EMPTY_FILE) + " (0 bytes)\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(ERROR_EMPTY_FILE) + "]"
+	assert lines[1] == "[ERROR] check.fileSizeNonZero - file size is not greater than zero: " + str(ERROR_EMPTY_FILE) + " (0 bytes)"
 	caplog.clear()
 
 ## MOCK AWS SETUP
@@ -100,9 +121,10 @@ def test_upload(caplog, tmp_path):
 	s3.upload(HAPPY_PATH_BUCKET, HAPPY_PATH_KEY, HAPPY_PATH_FILEPATH)
 
 	lines = caplog.text.splitlines()
-	assert len(lines) == 2
-	assert lines[0] == "[INFO] aws.upload - Uploading filepath " + str(HAPPY_PATH_FILEPATH) + " to S3 bucket " + HAPPY_PATH_BUCKET + " with key " + HAPPY_PATH_KEY
-	assert lines[1] == "[INFO] aws.upload - Uploaded filepath " + str(HAPPY_PATH_FILEPATH) + " to S3 bucket " + HAPPY_PATH_BUCKET + " with key " + HAPPY_PATH_KEY
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[INFO] aws.upload - Uploading filepath " + str(HAPPY_PATH_FILEPATH) + " to S3 bucket " + HAPPY_PATH_BUCKET + " with key " + HAPPY_PATH_KEY
+	assert lines[2] == "[INFO] aws.upload - Uploaded filepath " + str(HAPPY_PATH_FILEPATH) + " to S3 bucket " + HAPPY_PATH_BUCKET + " with key " + HAPPY_PATH_KEY
 	caplog.clear()
 	test_bucket.download_file(HAPPY_PATH_KEY, str(HAPPY_PATH_VERIFICATION_FILE))
 	filecmp.cmp(HAPPY_PATH_FILEPATH, HAPPY_PATH_VERIFICATION_FILE, shallow=False)
@@ -112,18 +134,20 @@ def test_upload(caplog, tmp_path):
 	with pytest.raises(RuntimeError):
 		s3.upload(HAPPY_PATH_BUCKET, HAPPY_PATH_KEY, HAPPY_PATH_FILEPATH)
 	lines = caplog.text.splitlines()
-	assert len(lines) == 2
-	assert lines[0] == "[INFO] aws.upload - Uploading filepath " + str(HAPPY_PATH_FILEPATH) + " to S3 bucket " + HAPPY_PATH_BUCKET + " with key " + HAPPY_PATH_KEY
-	assert lines[1] == "[ERROR] aws.upload - After uploading filepath " + str(HAPPY_PATH_FILEPATH) + ", multiple versions detected in S3 bucket " + HAPPY_PATH_BUCKET + " for key " + HAPPY_PATH_KEY
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[INFO] aws.upload - Uploading filepath " + str(HAPPY_PATH_FILEPATH) + " to S3 bucket " + HAPPY_PATH_BUCKET + " with key " + HAPPY_PATH_KEY
+	assert lines[2] == "[ERROR] aws.upload - After uploading filepath " + str(HAPPY_PATH_FILEPATH) + ", multiple versions detected in S3 bucket " + HAPPY_PATH_BUCKET + " for key " + HAPPY_PATH_KEY
 	caplog.clear()
 
 ## DEPENDENCY FAILURE
 	with pytest.raises(boto3.exceptions.S3UploadFailedError):
 		s3.upload(ERROR_NON_EXISTENT_BUCKET, HAPPY_PATH_KEY, HAPPY_PATH_FILEPATH)
 	lines = caplog.text.splitlines()
-	assert len(lines) == 2
-	assert lines[0] == "[INFO] aws.upload - Uploading filepath " + str(HAPPY_PATH_FILEPATH) + " to S3 bucket " + ERROR_NON_EXISTENT_BUCKET + " with key " + HAPPY_PATH_KEY
-	assert lines[1] == "[ERROR] aws.upload - Fault from AWS S3 calling upload_file! Failed to upload " + str(HAPPY_PATH_FILEPATH) + " to " + ERROR_NON_EXISTENT_BUCKET + "/" + HAPPY_PATH_KEY + ": An error occurred (NoSuchBucket) when calling the PutObject operation: The specified bucket does not exist"
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] aws.upload - Parameters: bucket=[" + str(ERROR_NON_EXISTENT_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[INFO] aws.upload - Uploading filepath " + str(HAPPY_PATH_FILEPATH) + " to S3 bucket " + ERROR_NON_EXISTENT_BUCKET + " with key " + HAPPY_PATH_KEY
+	assert lines[2] == "[ERROR] aws.upload - Fault from AWS S3 calling upload_file! Failed to upload " + str(HAPPY_PATH_FILEPATH) + " to " + ERROR_NON_EXISTENT_BUCKET + "/" + HAPPY_PATH_KEY + ": An error occurred (NoSuchBucket) when calling the PutObject operation: The specified bucket does not exist"
 	caplog.clear()
 
 @mock_s3
@@ -148,22 +172,34 @@ def test_download(caplog, tmp_path):
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
 		s3.download(None, HAPPY_PATH_KEY, HAPPY_PATH_FILEPATH)
-	assert caplog.text == "[ERROR] check.nonNone - can NOT be None: None\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.download - Parameters: bucket=[" + str(None) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.nonNone - can NOT be None: None"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.download(HAPPY_PATH_BUCKET, None, HAPPY_PATH_FILEPATH)
-	assert caplog.text == "[ERROR] check.nonNone - can NOT be None: None\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.download - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(None) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.nonNone - can NOT be None: None"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.download(HAPPY_PATH_BUCKET, HAPPY_PATH_KEY, ERROR_RELATIVE_FILEPATH)
-	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.download - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(ERROR_RELATIVE_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		s3.download(HAPPY_PATH_BUCKET, HAPPY_PATH_KEY, ERROR_EXISTING_FILE)
-	assert caplog.text == "[ERROR] check.nonexistent - file or directory already exists: " + str(ERROR_EXISTING_FILE) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.download - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(ERROR_EXISTING_FILE) + "]"
+	assert lines[1] == "[ERROR] check.nonexistent - file or directory already exists: " + str(ERROR_EXISTING_FILE)
 	caplog.clear()
 
 ## MOCK AWS SETUP
@@ -197,9 +233,10 @@ def test_download(caplog, tmp_path):
 
 	filecmp.cmp(HAPPY_PATH_FILEPATH, HAPPY_PATH_OUTPUT_CONTENT, shallow=False)
 	lines = caplog.text.splitlines()
-	assert len(lines) == 2
-	assert lines[0] == "[INFO] aws.download - Downloading key " + HAPPY_PATH_KEY + " from S3 bucket " + HAPPY_PATH_BUCKET + " to filepath " + str(HAPPY_PATH_FILEPATH)
-	assert lines[1] == "[INFO] aws.download - Downloaded key " + HAPPY_PATH_KEY + " from S3 bucket " + HAPPY_PATH_BUCKET + " to filepath " + str(HAPPY_PATH_FILEPATH)
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] aws.download - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[INFO] aws.download - Downloading key " + HAPPY_PATH_KEY + " from S3 bucket " + HAPPY_PATH_BUCKET + " to filepath " + str(HAPPY_PATH_FILEPATH)
+	assert lines[2] == "[INFO] aws.download - Downloaded key " + HAPPY_PATH_KEY + " from S3 bucket " + HAPPY_PATH_BUCKET + " to filepath " + str(HAPPY_PATH_FILEPATH)
 	caplog.clear()
 	os.remove(HAPPY_PATH_FILEPATH)
 
@@ -207,21 +244,23 @@ def test_download(caplog, tmp_path):
 	with pytest.raises(botocore.exceptions.ClientError):
 		s3.download(ERROR_NON_EXISTENT_BUCKET, HAPPY_PATH_KEY, HAPPY_PATH_FILEPATH)
 	lines = caplog.text.splitlines()
-	assert len(lines) == 4
-	assert lines[0] == "[INFO] aws.download - Downloading key " + HAPPY_PATH_KEY + " from S3 bucket " + ERROR_NON_EXISTENT_BUCKET + " to filepath " + str(HAPPY_PATH_FILEPATH)
-	assert lines[1] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! An error occurred (NoSuchBucket) when calling the HeadObject operation: The specified bucket does not exist"
-	assert lines[2].startswith("[ERROR] aws.download - Fault from AWS S3 calling download_file! Error: {'Code': 'NoSuchBucket', 'Message': 'The specified bucket does not exist', 'BucketName': 'does.not.exist', 'RequestID': ")
-	assert lines[3] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! ResponseMetadata: {'HTTPStatusCode': 404, 'HTTPHeaders': {}, 'RetryAttempts': 0}"
+	assert len(lines) == 5
+	assert lines[0] == "[INFO] aws.download - Parameters: bucket=[" + str(ERROR_NON_EXISTENT_BUCKET) + "] key=[" + str(HAPPY_PATH_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[INFO] aws.download - Downloading key " + HAPPY_PATH_KEY + " from S3 bucket " + ERROR_NON_EXISTENT_BUCKET + " to filepath " + str(HAPPY_PATH_FILEPATH)
+	assert lines[2] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! An error occurred (NoSuchBucket) when calling the HeadObject operation: The specified bucket does not exist"
+	assert lines[3].startswith("[ERROR] aws.download - Fault from AWS S3 calling download_file! Error: {'Code': 'NoSuchBucket', 'Message': 'The specified bucket does not exist', 'BucketName': 'does.not.exist', 'RequestID': ")
+	assert lines[4] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! ResponseMetadata: {'HTTPStatusCode': 404, 'HTTPHeaders': {}, 'RetryAttempts': 0}"
 	caplog.clear()
 
 	with pytest.raises(botocore.exceptions.ClientError):
 		s3.download(HAPPY_PATH_BUCKET, ERROR_NON_EXISTENT_KEY, HAPPY_PATH_FILEPATH)
 	lines = caplog.text.splitlines()
-	assert len(lines) == 4
-	assert lines[0] == "[INFO] aws.download - Downloading key " + ERROR_NON_EXISTENT_KEY + " from S3 bucket " + HAPPY_PATH_BUCKET + " to filepath " + str(HAPPY_PATH_FILEPATH)
-	assert lines[1] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! An error occurred (404) when calling the HeadObject operation: Not Found"
-	assert lines[2] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! Error: {'Code': '404', 'Message': 'Not Found'}"
-	assert lines[3] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! ResponseMetadata: {'RequestId': '', 'HostId': '', 'HTTPStatusCode': 404, 'HTTPHeaders': {}, 'RetryAttempts': 0}"
+	assert len(lines) == 5
+	assert lines[0] == "[INFO] aws.download - Parameters: bucket=[" + str(HAPPY_PATH_BUCKET) + "] key=[" + str(ERROR_NON_EXISTENT_KEY) + "] filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[INFO] aws.download - Downloading key " + ERROR_NON_EXISTENT_KEY + " from S3 bucket " + HAPPY_PATH_BUCKET + " to filepath " + str(HAPPY_PATH_FILEPATH)
+	assert lines[2] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! An error occurred (404) when calling the HeadObject operation: Not Found"
+	assert lines[3] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! Error: {'Code': '404', 'Message': 'Not Found'}"
+	assert lines[4] == "[ERROR] aws.download - Fault from AWS S3 calling download_file! ResponseMetadata: {'RequestId': '', 'HostId': '', 'HTTPStatusCode': 404, 'HTTPHeaders': {}, 'RetryAttempts': 0}"
 	caplog.clear()
 
 
@@ -243,17 +282,26 @@ def test_sns_publish(caplog):
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
 		sns.publish(None, HAPPY_PATH_MESSAGE)
-	assert caplog.text == "[ERROR] check.nonNone - can NOT be None: None\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.publish - Parameters: topic_arn=[" + str(None) + "] message=[" + str(HAPPY_PATH_MESSAGE) + "]"
+	assert lines[1] == "[ERROR] check.nonNone - can NOT be None: None"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		sns.publish(HAPPY_PATH_TOPIC_ARN, None)
-	assert caplog.text == "[ERROR] check.nonNone - can NOT be None: None\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.publish - Parameters: topic_arn=[" + str(HAPPY_PATH_TOPIC_ARN) + "] message=[" + str(None) + "]"
+	assert lines[1] == "[ERROR] check.nonNone - can NOT be None: None"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		sns.publish(ERROR_BAD_TOPIC_ARN, HAPPY_PATH_MESSAGE)
-	assert caplog.text == "[ERROR] aws.publish - topic_arn must match the AWS arn format: " + str(ERROR_BAD_TOPIC_ARN) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] aws.publish - Parameters: topic_arn=[" + str(ERROR_BAD_TOPIC_ARN) + "] message=[" + str(HAPPY_PATH_MESSAGE) + "]"
+	assert lines[1] == "[ERROR] aws.publish - topic_arn must match the AWS arn format: " + str(ERROR_BAD_TOPIC_ARN)
 	caplog.clear()
 
 ## MOCK AWS SETUP
@@ -272,9 +320,10 @@ def test_sns_publish(caplog):
 	sns.publish(HAPPY_PATH_TOPIC_ARN, HAPPY_PATH_MESSAGE)
 
 	lines = caplog.text.splitlines()
-	assert len(lines) == 2
-	assert lines[0] == "[INFO] aws.publish - Publishing message " + str(HAPPY_PATH_MESSAGE) + " to SNS topic " + str(HAPPY_PATH_TOPIC_ARN)
-	assert lines[1].startswith("[INFO] aws.publish - Published message " + str(HAPPY_PATH_MESSAGE) + " to SNS topic " + str(HAPPY_PATH_TOPIC_ARN) + " with messageId ")
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] aws.publish - Parameters: topic_arn=[" + str(HAPPY_PATH_TOPIC_ARN) + "] message=[" + str(HAPPY_PATH_MESSAGE) + "]"
+	assert lines[1] == "[INFO] aws.publish - Publishing message " + str(HAPPY_PATH_MESSAGE) + " to SNS topic " + str(HAPPY_PATH_TOPIC_ARN)
+	assert lines[2].startswith("[INFO] aws.publish - Published message " + str(HAPPY_PATH_MESSAGE) + " to SNS topic " + str(HAPPY_PATH_TOPIC_ARN) + " with messageId ")
 	caplog.clear()
 	messages = moto_sqs.receive_message(QueueUrl=test_queue_url)["Messages"]
 	assert len(messages) == 1
@@ -286,9 +335,10 @@ def test_sns_publish(caplog):
 	with pytest.raises(botocore.exceptions.ClientError):
 		sns.publish(ERROR_NON_EXISTENT_TOPIC_ARN, HAPPY_PATH_MESSAGE)
 	lines = caplog.text.splitlines()
-	assert len(lines) == 4
-	assert lines[0] == "[INFO] aws.publish - Publishing message " + str(HAPPY_PATH_MESSAGE) + " to SNS topic " + str(ERROR_NON_EXISTENT_TOPIC_ARN)
-	assert lines[1] == "[ERROR] aws.publish - Fault from AWS SNS calling topic.publish! An error occurred (NotFound) when calling the Publish operation: Endpoint with arn arn:aws:sns:us-east-2:123456789012:DoesNotExist not found"
-	assert lines[2] == "[ERROR] aws.publish - Fault from AWS SNS calling topic.publish! Error: {'Code': 'NotFound', 'Message': 'Endpoint with arn arn:aws:sns:us-east-2:123456789012:DoesNotExist not found'}"
-	assert lines[3] == "[ERROR] aws.publish - Fault from AWS SNS calling topic.publish! ResponseMetadata: {'HTTPStatusCode': 404, 'HTTPHeaders': {'server': 'amazon.com', 'status': '404'}, 'RetryAttempts': 0}"
+	assert len(lines) == 5
+	assert lines[0] == "[INFO] aws.publish - Parameters: topic_arn=[" + str(ERROR_NON_EXISTENT_TOPIC_ARN) + "] message=[" + str(HAPPY_PATH_MESSAGE) + "]"
+	assert lines[1] == "[INFO] aws.publish - Publishing message " + str(HAPPY_PATH_MESSAGE) + " to SNS topic " + str(ERROR_NON_EXISTENT_TOPIC_ARN)
+	assert lines[2] == "[ERROR] aws.publish - Fault from AWS SNS calling topic.publish! An error occurred (NotFound) when calling the Publish operation: Endpoint with arn arn:aws:sns:us-east-2:123456789012:DoesNotExist not found"
+	assert lines[3] == "[ERROR] aws.publish - Fault from AWS SNS calling topic.publish! Error: {'Code': 'NotFound', 'Message': 'Endpoint with arn arn:aws:sns:us-east-2:123456789012:DoesNotExist not found'}"
+	assert lines[4] == "[ERROR] aws.publish - Fault from AWS SNS calling topic.publish! ResponseMetadata: {'HTTPStatusCode': 404, 'HTTPHeaders': {'server': 'amazon.com', 'status': '404'}, 'RetryAttempts': 0}"
 	caplog.clear()

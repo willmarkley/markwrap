@@ -8,6 +8,7 @@ import tarfile
 from .util import check
 
 def compress(dirs, tarballName):
+	logging.info("Parameters: dirs=[%s] tarballName=[%s]", str(dirs), str(tarballName))
 	basenames = []
 	for dir in dirs:
 		check.isDir(dir)
@@ -29,6 +30,7 @@ def compress(dirs, tarballName):
 	logging.info("Compressed %s into %s", dirs, tarballName)
 
 def decompress(tarball, destinationPath):
+	logging.info("Parameters: tarball=[%s] destinationPath=[%s]", str(tarball), str(destinationPath))
 	check.isFile(tarball)
 	check.nonexistent(destinationPath)
 

@@ -31,54 +31,85 @@ def test_encrypt(caplog, tmp_path):
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(ERROR_NON_PATHLIKEOBJECT, HAPPY_PATH_RECIPIENT)
-	assert caplog.text == "[ERROR] check.pathlikeObject - path must be path-like object: " + str(ERROR_NON_PATHLIKEOBJECT) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(ERROR_NON_PATHLIKEOBJECT) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
+	assert lines[1] == "[ERROR] check.pathlikeObject - path must be path-like object: " + str(ERROR_NON_PATHLIKEOBJECT)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(ERROR_EMTPY_STRING, HAPPY_PATH_RECIPIENT)
-	assert caplog.text == "[ERROR] check.nonEmptyString - string cannot be empty: \n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(ERROR_EMTPY_STRING) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
+	assert lines[1] == "[ERROR] check.nonEmptyString - string cannot be empty: "
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(ERROR_RELATIVE_FILEPATH, HAPPY_PATH_RECIPIENT)
-	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(ERROR_RELATIVE_FILEPATH) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
+	assert lines[1] == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(ERROR_NONEXISTENT_FILE, HAPPY_PATH_RECIPIENT)
-	assert caplog.text == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NONEXISTENT_FILE) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(ERROR_NONEXISTENT_FILE) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
+	assert lines[1] == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NONEXISTENT_FILE)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(ERROR_NON_FILE, HAPPY_PATH_RECIPIENT)
-	assert caplog.text == "[ERROR] check.isFile - f is not a file: " + str(ERROR_NON_FILE) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(ERROR_NON_FILE) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
+	assert lines[1] == "[ERROR] check.isFile - f is not a file: " + str(ERROR_NON_FILE)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(HAPPY_PATH_FILEPATH, None)
-	assert caplog.text == "[ERROR] check.nonNone - can NOT be None: None\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "] recipient=[" + str(None) + "]"
+	assert lines[1] == "[ERROR] check.nonNone - can NOT be None: None"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(HAPPY_PATH_FILEPATH, ERROR_INVALID_KEY_ID)
-	assert caplog.text == "[ERROR] check.hexadecimal - string must be hexadecimal characters: " + str(ERROR_INVALID_KEY_ID) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "] recipient=[" + str(ERROR_INVALID_KEY_ID) + "]"
+	assert lines[1] == "[ERROR] check.hexadecimal - string must be hexadecimal characters: " + str(ERROR_INVALID_KEY_ID)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(HAPPY_PATH_FILEPATH, ERROR_INVALID_KEY_FINGERPRINT)
-	assert caplog.text == "[ERROR] check.hexadecimal - string must be hexadecimal characters: " + str(ERROR_INVALID_KEY_FINGERPRINT) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "] recipient=[" + str(ERROR_INVALID_KEY_FINGERPRINT) + "]"
+	assert lines[1] == "[ERROR] check.hexadecimal - string must be hexadecimal characters: " + str(ERROR_INVALID_KEY_FINGERPRINT)
 	caplog.clear()
 
 	caplog.set_level(logging.INFO)
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(HAPPY_PATH_FILEPATH, ERROR_NONEXISTENT_KEY_ID)
-	assert caplog.text == "[WARNING] gnupg._collect_output - gpg returned a non-zero error code: 2\n[ERROR] gpg.encrypt - Recipient does not exist in gpg: " + str(ERROR_NONEXISTENT_KEY_ID) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "] recipient=[" + str(ERROR_NONEXISTENT_KEY_ID) + "]"
+	assert lines[1] == "[WARNING] gnupg._collect_output - gpg returned a non-zero error code: 2"
+	assert lines[2] == "[ERROR] gpg.encrypt - Recipient does not exist in gpg: " + str(ERROR_NONEXISTENT_KEY_ID)
 	caplog.clear()
 
 	open(HAPPY_PATH_OUTPUT, 'a').close()
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(HAPPY_PATH_FILEPATH, HAPPY_PATH_RECIPIENT)
-	assert caplog.text == "[ERROR] check.nonexistent - file or directory already exists: " + str(HAPPY_PATH_OUTPUT) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
+	assert lines[1] == "[ERROR] check.nonexistent - file or directory already exists: " + str(HAPPY_PATH_OUTPUT)
 	caplog.clear()
 	os.remove(HAPPY_PATH_OUTPUT)
 
@@ -87,9 +118,10 @@ def test_encrypt(caplog, tmp_path):
 	assert output == HAPPY_PATH_OUTPUT
 
 	lines = caplog.text.splitlines()
-	assert len(lines) == 2
-	assert lines[0] == "[INFO] gpg.encrypt - Encrypting " + str(HAPPY_PATH_FILEPATH) + " with recipient " + str(HAPPY_PATH_RECIPIENT) + " into " + str(HAPPY_PATH_OUTPUT)
-	assert lines[1] == "[INFO] gpg.encrypt - Encrypted " + str(HAPPY_PATH_FILEPATH) + " with recipient " + str(HAPPY_PATH_RECIPIENT) + " into " + str(HAPPY_PATH_OUTPUT)
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
+	assert lines[1] == "[INFO] gpg.encrypt - Encrypting " + str(HAPPY_PATH_FILEPATH) + " with recipient " + str(HAPPY_PATH_RECIPIENT) + " into " + str(HAPPY_PATH_OUTPUT)
+	assert lines[2] == "[INFO] gpg.encrypt - Encrypted " + str(HAPPY_PATH_FILEPATH) + " with recipient " + str(HAPPY_PATH_RECIPIENT) + " into " + str(HAPPY_PATH_OUTPUT)
 	caplog.clear()
 
 	## diff against "good" encrypted by same key
@@ -101,9 +133,10 @@ def test_encrypt(caplog, tmp_path):
 	assert output == HAPPY_PATH_OUTPUT
 
 	lines = caplog.text.splitlines()
-	assert len(lines) == 2
-	assert lines[0] == "[INFO] gpg.encrypt - Encrypting " + str(HAPPY_PATH_FILEPATH) + " with recipient " + str(HAPPY_PATH_RECIPIENT_FINGERPRINT) + " into " + str(HAPPY_PATH_OUTPUT)
-	assert lines[1] == "[INFO] gpg.encrypt - Encrypted " + str(HAPPY_PATH_FILEPATH) + " with recipient " + str(HAPPY_PATH_RECIPIENT_FINGERPRINT) + " into " + str(HAPPY_PATH_OUTPUT)
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT_FINGERPRINT) + "]"
+	assert lines[1] == "[INFO] gpg.encrypt - Encrypting " + str(HAPPY_PATH_FILEPATH) + " with recipient " + str(HAPPY_PATH_RECIPIENT_FINGERPRINT) + " into " + str(HAPPY_PATH_OUTPUT)
+	assert lines[2] == "[INFO] gpg.encrypt - Encrypted " + str(HAPPY_PATH_FILEPATH) + " with recipient " + str(HAPPY_PATH_RECIPIENT_FINGERPRINT) + " into " + str(HAPPY_PATH_OUTPUT)
 	caplog.clear()
 
 	## diff against "good" encrypted by same key
@@ -130,45 +163,70 @@ def test_decrypt(caplog, tmp_path):
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(ERROR_RELATIVE_FILEPATH)
-	assert caplog.text == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_RELATIVE_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.absolutePath - path must be an absolute path: " + str(ERROR_RELATIVE_FILEPATH)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(ERROR_NONEXISTENT_FILE)
-	assert caplog.text == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NONEXISTENT_FILE) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_NONEXISTENT_FILE) + "]"
+	assert lines[1] == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NONEXISTENT_FILE)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(ERROR_NON_FILE)
-	assert caplog.text == "[ERROR] check.isFile - f is not a file: " + str(ERROR_NON_FILE) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_NON_FILE) + "]"
+	assert lines[1] == "[ERROR] check.isFile - f is not a file: " + str(ERROR_NON_FILE)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(ERROR_NON_GPG_FILE)
-	assert caplog.text == "[ERROR] check.endsIn - file must end in .gpg: " + str(ERROR_NON_GPG_FILE) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_NON_GPG_FILE) + "]"
+	assert lines[1] == "[ERROR] check.endsIn - file must end in .gpg: " + str(ERROR_NON_GPG_FILE)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(ERROR_GPG_FILE_INVALID_NAME)
-	assert caplog.text == "[ERROR] gpg.decrypt - Filepath must end in .KEY___ID.gpg: " + str(ERROR_GPG_FILE_INVALID_NAME) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_GPG_FILE_INVALID_NAME) + "]"
+	assert lines[1] == "[ERROR] gpg.decrypt - Filepath must end in .KEY___ID.gpg: " + str(ERROR_GPG_FILE_INVALID_NAME)
 	caplog.clear()
 
 	open(HAPPY_PATH_OUTPUT, 'a').close()
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(HAPPY_PATH_FILEPATH)
-	assert caplog.text == "[ERROR] check.nonexistent - file or directory already exists: " + str(HAPPY_PATH_OUTPUT) + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[ERROR] check.nonexistent - file or directory already exists: " + str(HAPPY_PATH_OUTPUT)
 	caplog.clear()
 	os.remove(HAPPY_PATH_OUTPUT)
 
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(ERROR_GPG_FILE_KEYID_INVALID)
-	assert caplog.text == "[ERROR] check.hexadecimal - string must be hexadecimal characters: " + str(ERROR_GPG_FILE_KEYID_INVALID)[:-4][-8:] + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_GPG_FILE_KEYID_INVALID) + "]"
+	assert lines[1] == "[ERROR] check.hexadecimal - string must be hexadecimal characters: " + str(ERROR_GPG_FILE_KEYID_INVALID)[:-4][-8:]
 	caplog.clear()
 
 	caplog.set_level(logging.INFO)
 	with pytest.raises(RuntimeError):
 		gpg.decrypt(ERROR_GPG_FILE_KEYID_NONEXISTENT)
-	assert caplog.text == "[WARNING] gnupg._collect_output - gpg returned a non-zero error code: 2\n[ERROR] gpg.decrypt - Recipient does not exist in gpg: " + str(ERROR_GPG_FILE_KEYID_NONEXISTENT)[:-4][-8:] + "\n"
+	lines = caplog.text.splitlines()
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_GPG_FILE_KEYID_NONEXISTENT) + "]"
+	assert lines[1] == "[WARNING] gnupg._collect_output - gpg returned a non-zero error code: 2"
+	assert lines[2] == "[ERROR] gpg.decrypt - Recipient does not exist in gpg: " + str(ERROR_GPG_FILE_KEYID_NONEXISTENT)[:-4][-8:]
 	caplog.clear()
 
 ## HAPPY PATH
@@ -176,9 +234,10 @@ def test_decrypt(caplog, tmp_path):
 	assert output == str(HAPPY_PATH_OUTPUT)
 
 	lines = caplog.text.splitlines()
-	assert len(lines) == 2
-	assert lines[0] == "[INFO] gpg.decrypt - Decrypting " + str(HAPPY_PATH_FILEPATH) + " into " + str(HAPPY_PATH_OUTPUT)
-	assert lines[1] == "[INFO] gpg.decrypt - Decrypted " + str(HAPPY_PATH_FILEPATH) + " into " + str(HAPPY_PATH_OUTPUT)
+	assert len(lines) == 3
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(HAPPY_PATH_FILEPATH) + "]"
+	assert lines[1] == "[INFO] gpg.decrypt - Decrypting " + str(HAPPY_PATH_FILEPATH) + " into " + str(HAPPY_PATH_OUTPUT)
+	assert lines[2] == "[INFO] gpg.decrypt - Decrypted " + str(HAPPY_PATH_FILEPATH) + " into " + str(HAPPY_PATH_OUTPUT)
 	caplog.clear()
 
 	# diff against decrypted original
