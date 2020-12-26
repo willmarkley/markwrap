@@ -31,6 +31,7 @@ def test_compress(caplog, tmp_path):
 
 	ERROR_RELATIVE_PATH_DIR = tstconst.EXISTING_DIR
 	ERROR_NONEXISTENT_DIR = TMP_DIR / tstconst.NONEXISTENT_DIR
+	ERROR_NON_DIR = ERROR_EXISTING_FILE
 
 	ORIGINAL_DIR = TMP_DIR / tstconst.EXISTING_DIR
 	TARGET_DIR = TMP_DIR / "extracted"
@@ -93,11 +94,11 @@ def test_compress(caplog, tmp_path):
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
-		tar.compress([ERROR_EXISTING_FILE], HAPPY_PATH_TARBALLNAME)
+		tar.compress([ERROR_NON_DIR], HAPPY_PATH_TARBALLNAME)
 	lines = caplog.text.splitlines()
 	assert len(lines) == 2
-	assert lines[0] == "[INFO] tar.compress - Parameters: dirs=[" + str([ERROR_EXISTING_FILE]) + "] tarballName=[" + str(HAPPY_PATH_TARBALLNAME) + "]"
-	assert lines[1] == "[ERROR] check.isDir - d is not a directory: " + str(ERROR_EXISTING_FILE)
+	assert lines[0] == "[INFO] tar.compress - Parameters: dirs=[" + str([ERROR_NON_DIR]) + "] tarballName=[" + str(HAPPY_PATH_TARBALLNAME) + "]"
+	assert lines[1] == "[ERROR] check.isDir - d is not a directory: " + str(ERROR_NON_DIR)
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):

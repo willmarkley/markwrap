@@ -10,6 +10,7 @@ EXISTING_DIR_A = "dirs/a"
 EXISTING_DIR_B = "dirs/b"
 EXISTING_DIR_C = "dirs/c"
 EXISTING_FILE  = "file.txt"
+EXISTING_FILE_2 = "a1.txt"
 EXISTING_ARCHIVE = "archive.tar.gz"
 EMPTY_FILE = "empty.txt"
 
