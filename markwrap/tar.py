@@ -12,7 +12,7 @@ def compress(dirs, tarballName):
 	basenames = []
 	for dir in dirs:
 		check.isDir(dir)
-		basenames.append(os.path.basename(dir))
+		basenames.append(os.path.basename(os.path.normpath(dir)))
 	check.noDuplicates(basenames)
 
 	check.nonexistent(tarballName)
@@ -21,7 +21,7 @@ def compress(dirs, tarballName):
 	logging.info("Compressing %s into %s", dirs, tarballName)
 	with tarfile.open(tarballName, "w:gz") as tar:
 		for dir in dirs:
-			tar.add(dir, arcname=os.path.basename(dir))
+			tar.add(dir, arcname=os.path.basename(os.path.normpath(dir)))
 
 	check.fileSizeNonZero(tarballName)
 	if not tarfile.is_tarfile(tarballName):
@@ -31,7 +31,7 @@ def compress(dirs, tarballName):
 
 def decompress(tarball, destinationPath):
 	logging.info("Parameters: tarball=[%s] destinationPath=[%s]", str(tarball), str(destinationPath))
-	check.isFile(tarball)
+	check.fileSizeNonZero(tarball)
 	check.nonexistent(destinationPath)
 
 	if not tarfile.is_tarfile(tarball):

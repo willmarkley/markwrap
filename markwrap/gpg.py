@@ -34,7 +34,7 @@ gpg = gnupg.GPG()
 
 def encrypt(filepath, recipient):
 	logging.info("Parameters: filepath=[%s] recipient=[%s]", str(filepath), str(recipient))
-	check.isFile(filepath)
+	check.fileSizeNonZero(filepath)
 	check.hexadecimal(recipient)
 	key = gpg.list_keys(keys=recipient)
 	if len(key) != 1:
@@ -58,7 +58,7 @@ def encrypt(filepath, recipient):
 
 def decrypt(filepath):
 	logging.info("Parameters: filepath=[%s]", str(filepath))
-	check.isFile(filepath)
+	check.fileSizeNonZero(filepath)
 	check.endsIn(filepath, ".gpg")
 	if str(filepath)[-13] != ".":
 		logging.error("Filepath must end in .KEY___ID.gpg: %s", filepath)

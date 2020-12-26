@@ -20,7 +20,7 @@ def test_compress(caplog, tmp_path):
 	TMP_DIR = tmp_path / "tst.resources"
 	shutil.copytree(tstconst.TEST_RESOURCES_DIR, TMP_DIR)
 
-	HAPPY_PATH_DIRS = [TMP_DIR / tstconst.EXISTING_DIR_A, TMP_DIR / tstconst.EXISTING_DIR_B, TMP_DIR / tstconst.EXISTING_DIR_C]
+	HAPPY_PATH_DIRS = [TMP_DIR / tstconst.EXISTING_DIR_A, TMP_DIR / tstconst.EXISTING_DIR_B, str(TMP_DIR / tstconst.EXISTING_DIR_C) + "/"]
 	HAPPY_PATH_TARBALLNAME = TMP_DIR / tstconst.NONEXISTENT_ARCHIVE
 
 	ERROR_NON_PATHLIKEOBJECT = tstconst.NON_PATH_LIKE_OBJECT
@@ -108,6 +108,14 @@ def test_compress(caplog, tmp_path):
 	assert lines[1] == "[ERROR] check.noDuplicates - duplicates found in list: " + str([os.path.basename(HAPPY_PATH_DIRS[0]), os.path.basename(HAPPY_PATH_DIRS[0])])
 	caplog.clear()
 
+	with pytest.raises(RuntimeError):
+		tar.compress([HAPPY_PATH_DIRS[0], str(HAPPY_PATH_DIRS[0])+"/"], HAPPY_PATH_TARBALLNAME)
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] tar.compress - Parameters: dirs=[" + str([HAPPY_PATH_DIRS[0], str(HAPPY_PATH_DIRS[0])+"/"]) + "] tarballName=[" + str(HAPPY_PATH_TARBALLNAME) + "]"
+	assert lines[1] == "[ERROR] check.noDuplicates - duplicates found in list: " + str([os.path.basename(HAPPY_PATH_DIRS[0]), os.path.basename(HAPPY_PATH_DIRS[0])])
+	caplog.clear()
+
 ## HAPPY PATH
 	tar.compress(HAPPY_PATH_DIRS, HAPPY_PATH_TARBALLNAME)
 
@@ -135,6 +143,7 @@ def test_decompress(caplog, tmp_path):
 
 	ERROR_RELATIVE_PATH_ARCHIVE = tstconst.EXISTING_ARCHIVE
 	ERROR_NONEXISTENT_FILE = TMP_DIR / tstconst.NONEXISTENT_FILE
+	ERROR_EMPTY_FILE = TMP_DIR / tstconst.EMPTY_FILE
 	ERROR_NONTARBALL = TMP_DIR / tstconst.EXISTING_FILE
 
 	ERROR_EXISTING_DIR = TMP_DIR / tstconst.EXISTING_DIR
@@ -157,6 +166,14 @@ def test_decompress(caplog, tmp_path):
 	assert len(lines) == 2
 	assert lines[0] == "[INFO] tar.decompress - Parameters: tarball=[" + str(ERROR_NONEXISTENT_FILE) + "] destinationPath=[" + str(HAPPY_PATH_DESTPATH) + "]"
 	assert lines[1] == "[ERROR] check.exists - file or directory does not exist: " + str(ERROR_NONEXISTENT_FILE)
+	caplog.clear()
+
+	with pytest.raises(RuntimeError):
+		tar.decompress(ERROR_EMPTY_FILE, HAPPY_PATH_DESTPATH)
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] tar.decompress - Parameters: tarball=[" + str(ERROR_EMPTY_FILE) + "] destinationPath=[" + str(HAPPY_PATH_DESTPATH) + "]"
+	assert lines[1] == "[ERROR] check.fileSizeNonZero - file size is not greater than zero: " + str(ERROR_EMPTY_FILE) + " (0 bytes)"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):

@@ -23,6 +23,7 @@ def test_encrypt(caplog, tmp_path):
 	ERROR_RELATIVE_FILEPATH = tstconst.EXISTING_FILE
 	ERROR_NONEXISTENT_FILE = TMP_DIR / tstconst.NONEXISTENT_FILE
 	ERROR_NON_FILE = TMP_DIR / tstconst.EXISTING_DIR
+	ERROR_EMPTY_FILE = TMP_DIR / tstconst.EMPTY_FILE
 
 	ERROR_INVALID_KEY_ID = tstconst.INVALID_KEY_ID
 	ERROR_INVALID_KEY_FINGERPRINT = tstconst.INVALID_KEY_FINGERPRINT
@@ -67,6 +68,14 @@ def test_encrypt(caplog, tmp_path):
 	assert len(lines) == 2
 	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(ERROR_NON_FILE) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
 	assert lines[1] == "[ERROR] check.isFile - f is not a file: " + str(ERROR_NON_FILE)
+	caplog.clear()
+
+	with pytest.raises(RuntimeError):
+		gpg.encrypt(ERROR_EMPTY_FILE, HAPPY_PATH_RECIPIENT)
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.encrypt - Parameters: filepath=[" + str(ERROR_EMPTY_FILE) + "] recipient=[" + str(HAPPY_PATH_RECIPIENT) + "]"
+	assert lines[1] == "[ERROR] check.fileSizeNonZero - file size is not greater than zero: " + str(ERROR_EMPTY_FILE) + " (0 bytes)"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
@@ -154,6 +163,7 @@ def test_decrypt(caplog, tmp_path):
 	ERROR_RELATIVE_FILEPATH = tstconst.EXISTING_FILE
 	ERROR_NONEXISTENT_FILE = TMP_DIR / tstconst.NONEXISTENT_FILE
 	ERROR_NON_FILE = TMP_DIR / tstconst.EXISTING_DIR
+	ERROR_EMPTY_FILE = TMP_DIR / tstconst.EMPTY_FILE
 	ERROR_NON_GPG_FILE = TMP_DIR / tstconst.EXISTING_FILE
 	ERROR_GPG_FILE_INVALID_NAME = TMP_DIR / tstconst.GPG_FILE_INVALID_NAME
 
@@ -183,6 +193,14 @@ def test_decrypt(caplog, tmp_path):
 	assert len(lines) == 2
 	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_NON_FILE) + "]"
 	assert lines[1] == "[ERROR] check.isFile - f is not a file: " + str(ERROR_NON_FILE)
+	caplog.clear()
+
+	with pytest.raises(RuntimeError):
+		gpg.decrypt(ERROR_EMPTY_FILE)
+	lines = caplog.text.splitlines()
+	assert len(lines) == 2
+	assert lines[0] == "[INFO] gpg.decrypt - Parameters: filepath=[" + str(ERROR_EMPTY_FILE) + "]"
+	assert lines[1] == "[ERROR] check.fileSizeNonZero - file size is not greater than zero: " + str(ERROR_EMPTY_FILE) + " (0 bytes)"
 	caplog.clear()
 
 	with pytest.raises(RuntimeError):
