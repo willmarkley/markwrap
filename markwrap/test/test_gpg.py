@@ -39,6 +39,7 @@ def test_encrypt(caplog, tmp_path):
 	caplog.clear()
 
 	gpg = markwrap_gpg.GPG(GNUPG_HOME)
+	caplog.clear()
 
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
@@ -191,6 +192,7 @@ def test_decrypt(caplog, tmp_path):
 	caplog.clear()
 
 	gpg = markwrap_gpg.GPG(GNUPG_HOME)
+	caplog.clear()
 
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
