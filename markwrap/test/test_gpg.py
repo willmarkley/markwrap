@@ -30,7 +30,7 @@ def test_encrypt(caplog, tmp_path):
 	ERROR_NONEXISTENT_KEY_ID = tstconst.NONEXISTENT_KEY_ID
 
 	GNUPG_HOME = TMP_DIR / tstconst.GNUPG_HOME
-	gpg_setup = gnupg.GPG(gnupghome=GPG_HOME)
+	gpg_setup = gnupg.GPG(gnupghome=GNUPG_HOME)
 	gpg_setup.encoding = 'utf-8'
 	gpg_setup.list_keys()
 	with open(TMP_DIR / tstconst.KEY_FILE, "rt") as keyfile:
@@ -182,7 +182,7 @@ def test_decrypt(caplog, tmp_path):
 	ERROR_GPG_FILE_KEYID_NONEXISTENT = TMP_DIR / tstconst.GPG_FILE_KEYID_NONEXISTENT
 
 	GNUPG_HOME = TMP_DIR / tstconst.GNUPG_HOME
-	gpg_setup = gnupg.GPG(gnupghome=GPG_HOME)
+	gpg_setup = gnupg.GPG(gnupghome=GNUPG_HOME)
 	gpg_setup.encoding = 'utf-8'
 	gpg_setup.list_keys()
 	with open(TMP_DIR / tstconst.KEY_FILE, "rt") as keyfile:
