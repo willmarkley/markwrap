@@ -36,7 +36,7 @@ class GPG:
 		self._gpg = gnupg.GPG(gnupghome=gnupg_home)
 		self._gpg.encoding = 'utf-8'
 
-	def encrypt(filepath, recipient):
+	def encrypt(self, filepath, recipient):
 		logging.info("Parameters: filepath=[%s] recipient=[%s]", str(filepath), str(recipient))
 		check.fileSizeNonZero(filepath)
 		check.hexadecimal(recipient)
@@ -60,7 +60,7 @@ class GPG:
 
 		return targetFile
 
-	def decrypt(filepath):
+	def decrypt(self, filepath):
 		logging.info("Parameters: filepath=[%s]", str(filepath))
 		check.fileSizeNonZero(filepath)
 		check.endsIn(filepath, ".gpg")
