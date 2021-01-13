@@ -18,6 +18,7 @@ NONEXISTENT_DIR = "new"
 NONEXISTENT_FILE = "new.txt"
 NONEXISTENT_ARCHIVE = "new.tar.gz"
 
+GNUPG_HOME = "gnupg"
 GPG_FILE_KEYID_INVALID = "filetest.txt.ZZcQMwLA.gpg"
 GPG_FILE_KEYID_NONEXISTENT = "filetest.txt.AAAABBBB.gpg"
 GPG_FILE_INVALID_NAME = "file.txtAAAABBBB.gpg"
