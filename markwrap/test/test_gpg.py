@@ -29,6 +29,13 @@ def test_encrypt(caplog, tmp_path):
 	ERROR_INVALID_KEY_FINGERPRINT = tstconst.INVALID_KEY_FINGERPRINT
 	ERROR_NONEXISTENT_KEY_ID = tstconst.NONEXISTENT_KEY_ID
 
+	gpg_setup = gnupg.GPG()
+	gpg_setup.encoding = 'utf-8'
+	gpg_setup.list_keys()
+	with open(TMP_DIR / tstconst.KEY_FILE, "rt") as keyfile:
+		gpg_setup.import_keys(keyfile.read())
+	gpg_setup.trust_keys(tstconst.KEY_FINGERPRINT, 'TRUST_ULTIMATE')
+
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
 		gpg.encrypt(ERROR_NON_PATHLIKEOBJECT, HAPPY_PATH_RECIPIENT)
