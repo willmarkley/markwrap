@@ -35,6 +35,7 @@ def test_encrypt(caplog, tmp_path):
 	with open(TMP_DIR / tstconst.KEY_FILE, "rt") as keyfile:
 		gpg_setup.import_keys(keyfile.read())
 	gpg_setup.trust_keys(tstconst.KEY_FINGERPRINT, 'TRUST_ULTIMATE')
+	caplog.clear()
 
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
