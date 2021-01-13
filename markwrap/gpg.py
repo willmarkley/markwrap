@@ -30,58 +30,62 @@ except OSError as error:
 logging.debug("Validated module gnupg can locate gpg install")
 
 
-gpg = gnupg.GPG()
+class GPG:
+	def __init__(self, gnupg_home):
+		check.isDir(gnupg_home)
+		self._gpg = gnupg.GPG(gnupghome=gnupg_home)
+		self._gpg.encoding = 'utf-8'
 
-def encrypt(filepath, recipient):
-	logging.info("Parameters: filepath=[%s] recipient=[%s]", str(filepath), str(recipient))
-	check.fileSizeNonZero(filepath)
-	check.hexadecimal(recipient)
-	key = gpg.list_keys(keys=recipient)
-	if len(key) != 1:
-		logging.error("Recipient does not exist in gpg: %s", recipient)
-		raise RuntimeError()
-
-	targetFile = str(filepath) + "." + str(recipient)[-8:] + ".gpg"
-	check.nonexistent(targetFile)
-
-	logging.info("Encrypting %s with recipient %s into %s", filepath, recipient, targetFile)
-	with open(filepath, "rb") as file:
-		result = gpg.encrypt_file(file, recipient, armor=False, output=targetFile)
-		if not result.ok:
-			logging.error("Encryption of %s with key %s failed: %s", filepath, recipient, result.status)
+	def encrypt(filepath, recipient):
+		logging.info("Parameters: filepath=[%s] recipient=[%s]", str(filepath), str(recipient))
+		check.fileSizeNonZero(filepath)
+		check.hexadecimal(recipient)
+		key = self._gpg.list_keys(keys=recipient)
+		if len(key) != 1:
+			logging.error("Recipient does not exist in gpg: %s", recipient)
 			raise RuntimeError()
 
-	check.fileSizeNonZero(targetFile)
-	logging.info("Encrypted %s with recipient %s into %s", filepath, recipient, targetFile)
+		targetFile = str(filepath) + "." + str(recipient)[-8:] + ".gpg"
+		check.nonexistent(targetFile)
 
-	return targetFile
+		logging.info("Encrypting %s with recipient %s into %s", filepath, recipient, targetFile)
+		with open(filepath, "rb") as file:
+			result = self._gpg.encrypt_file(file, recipient, armor=False, output=targetFile)
+			if not result.ok:
+				logging.error("Encryption of %s with key %s failed: %s", filepath, recipient, result.status)
+				raise RuntimeError()
 
-def decrypt(filepath):
-	logging.info("Parameters: filepath=[%s]", str(filepath))
-	check.fileSizeNonZero(filepath)
-	check.endsIn(filepath, ".gpg")
-	if str(filepath)[-13] != ".":
-		logging.error("Filepath must end in .KEY___ID.gpg: %s", filepath)
-		raise RuntimeError()
+		check.fileSizeNonZero(targetFile)
+		logging.info("Encrypted %s with recipient %s into %s", filepath, recipient, targetFile)
 
-	targetFile = str(filepath)[:-13]
-	check.nonexistent(targetFile)
+		return targetFile
 
-	recipient = str(filepath)[:-4][-8:]
-	check.hexadecimal(recipient)
-	key = gpg.list_keys(keys=recipient)
-	if len(key) != 1:
-		logging.error("Recipient does not exist in gpg: %s", recipient)
-		raise RuntimeError()
-
-	logging.info("Decrypting %s into %s", filepath, targetFile)
-	with open(filepath, "rb") as file:
-		result = gpg.decrypt_file(file, output=targetFile)
-		if not result.ok:
-			logging.error("Decryption of %s failed: %s", filepath, result.status)
+	def decrypt(filepath):
+		logging.info("Parameters: filepath=[%s]", str(filepath))
+		check.fileSizeNonZero(filepath)
+		check.endsIn(filepath, ".gpg")
+		if str(filepath)[-13] != ".":
+			logging.error("Filepath must end in .KEY___ID.gpg: %s", filepath)
 			raise RuntimeError()
 
-	check.fileSizeNonZero(targetFile)
-	logging.info("Decrypted %s into %s", filepath, targetFile)
+		targetFile = str(filepath)[:-13]
+		check.nonexistent(targetFile)
 
-	return targetFile
+		recipient = str(filepath)[:-4][-8:]
+		check.hexadecimal(recipient)
+		key = self._gpg.list_keys(keys=recipient)
+		if len(key) != 1:
+			logging.error("Recipient does not exist in gpg: %s", recipient)
+			raise RuntimeError()
+
+		logging.info("Decrypting %s into %s", filepath, targetFile)
+		with open(filepath, "rb") as file:
+			result = self._gpg.decrypt_file(file, output=targetFile)
+			if not result.ok:
+				logging.error("Decryption of %s failed: %s", filepath, result.status)
+				raise RuntimeError()
+
+		check.fileSizeNonZero(targetFile)
+		logging.info("Decrypted %s into %s", filepath, targetFile)
+
+		return targetFile

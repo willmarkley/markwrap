@@ -1,4 +1,4 @@
-import markwrap.gpg as gpg
+import markwrap.gpg as markwrap_gpg
 import markwrap.test.constants as tstconst
 import logging
 import os
@@ -29,13 +29,16 @@ def test_encrypt(caplog, tmp_path):
 	ERROR_INVALID_KEY_FINGERPRINT = tstconst.INVALID_KEY_FINGERPRINT
 	ERROR_NONEXISTENT_KEY_ID = tstconst.NONEXISTENT_KEY_ID
 
-	gpg_setup = gnupg.GPG()
+	GNUPG_HOME = TMP_DIR / tstconst.GNUPG_HOME
+	gpg_setup = gnupg.GPG(gnupghome=GPG_HOME)
 	gpg_setup.encoding = 'utf-8'
 	gpg_setup.list_keys()
 	with open(TMP_DIR / tstconst.KEY_FILE, "rt") as keyfile:
 		gpg_setup.import_keys(keyfile.read())
 	gpg_setup.trust_keys(tstconst.KEY_FINGERPRINT, 'TRUST_ULTIMATE')
 	caplog.clear()
+
+	gpg = markwrap_gpg.GPG(GNUPG_HOME)
 
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
@@ -178,13 +181,16 @@ def test_decrypt(caplog, tmp_path):
 	ERROR_GPG_FILE_KEYID_INVALID = TMP_DIR / tstconst.GPG_FILE_KEYID_INVALID
 	ERROR_GPG_FILE_KEYID_NONEXISTENT = TMP_DIR / tstconst.GPG_FILE_KEYID_NONEXISTENT
 
-	gpg_setup = gnupg.GPG()
+	GNUPG_HOME = TMP_DIR / tstconst.GNUPG_HOME
+	gpg_setup = gnupg.GPG(gnupghome=GPG_HOME)
 	gpg_setup.encoding = 'utf-8'
 	gpg_setup.list_keys()
 	with open(TMP_DIR / tstconst.KEY_FILE, "rt") as keyfile:
 		gpg_setup.import_keys(keyfile.read())
 	gpg_setup.trust_keys(tstconst.KEY_FINGERPRINT, 'TRUST_ULTIMATE')
 	caplog.clear()
+
+	gpg = markwrap_gpg.GPG(GNUPG_HOME)
 
 ## INVALID INPUT
 	with pytest.raises(RuntimeError):
