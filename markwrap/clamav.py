@@ -13,7 +13,7 @@ from .util import check
 FRESHCLAM="/usr/local/bin/freshclam"
 CLAMSCAN="/usr/local/bin/clamscan"
 DATABASES="/usr/local/share/clamav"
-CLAMSCAN_LOG_FILE="/usr/local/var/log/clamscan.log"
+CLAMSCAN_LOG_FILE="/usr/local/var/log/clamav/clamscan.log"
 
 logging.debug("Validating freshclam install at %s", FRESHCLAM)
 validate_result = shutil.which(FRESHCLAM)
@@ -51,7 +51,7 @@ logging.debug("Validated log file exists at %s", CLAMSCAN_LOG_FILE)
 
 def clamscan(dir):
 	check.isDir(dir)
-	process.run([CLAMSCAN,"-ro","--database="+DATABASES,"--log="+CLAMSCAN_LOG_FILE,dir])
+	process.run([CLAMSCAN,"-ro","--log="+CLAMSCAN_LOG_FILE,dir])
 
 def freshclam():
 	process.run([FRESHCLAM, "-u","_clamav"])
